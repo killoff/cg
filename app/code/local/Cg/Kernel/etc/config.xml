@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Cg_Kernel>
+            <version>1.0.0</version>
+        </Cg_Kernel>
+    </modules>
+</config>

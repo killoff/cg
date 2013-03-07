@@ -1,0 +1,17 @@
+<config>
+    <modules>
+        <Cg_Kernel>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Cg_Kernel>
+    </modules>
+    <modules>
+        <Cg_Product>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Cg_Kernel/>
+            </depends>
+        </Cg_Product>
+    </modules>
+</config>

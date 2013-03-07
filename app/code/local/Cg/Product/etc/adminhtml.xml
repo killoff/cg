@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<config>
+    <!--acl>
+        <resources>
+            <admin>
+                <children>
+                    <customer translate="title" module="customer">
+                        <title>Customers</title>
+                        <sort_order>40</sort_order>
+                        <children>
+                            <group translate="title">
+                                <title>Customer Groups</title>
+                                <sort_order>10</sort_order>
+                            </group>
+                            <manage translate="title">
+                                <title>Manage Customers</title>
+                                <sort_order>0</sort_order>
+                            </manage>
+                            <online translate="title">
+                                <title>Online Customers</title>
+                                <sort_order>100</sort_order>
+                            </online>
+                        </children>
+                    </customer>
+                </children>
+            </admin>
+        </resources>
+    </acl-->
+    <menu>
+        <product translate="title" module="cg_product">
+            <title>Products</title>
+            <sort_order>200</sort_order>
+            <action>adminhtml/product/</action>
+            <!--children>
+                <manage translate="title" module="customer">
+                    <title>Manage Customers</title>
+                    <action>adminhtml/customer/</action>
+                    <sort_order>0</sort_order>
+                </manage>
+                <group translate="title" module="customer">
+                    <title>Customer Groups</title>
+                    <action>adminhtml/customer_group/</action>
+                    <sort_order>10</sort_order>
+                </group>
+                <online translate="title" module="customer">
+                    <title>Online Customers</title>
+                    <action>adminhtml/customer_online/</action>
+                    <sort_order>100</sort_order>
+                </online>
+            </children-->
+        </product>
+    </menu>
+</config>
