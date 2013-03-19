@@ -38,7 +38,7 @@ class Cg_Product_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
     protected function _afterLoadCollection()
     {
-//        $this->getCollection()->walk('afterLoad');
+        $this->getCollection()->walk('afterLoad');
 //        parent::_afterLoadCollection();
     }
 
@@ -47,8 +47,8 @@ class Cg_Product_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
      *
      * @return string
      */
-//    public function getRowUrl($row)
-//    {
-//        return $this->getUrl('*/*/edit', array('id' => $row->getId()));
-//    }
+    public function getRowUrl($row)
+    {
+        return $this->getUrl('*/*/edit', array('id' => $row->getId()));
+    }
 }

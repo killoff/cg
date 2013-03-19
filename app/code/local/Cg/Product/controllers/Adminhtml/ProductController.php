@@ -101,6 +101,8 @@ class Cg_Product_Adminhtml_ProductController extends Mage_Adminhtml_Controller_A
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
 
+    // @TODO use traits to extend core functionality
+
     public function saveAction()
     {
         try {
@@ -109,18 +111,15 @@ class Cg_Product_Adminhtml_ProductController extends Mage_Adminhtml_Controller_A
             $id = $this->getRequest()->getParam('id');
             if ($id) {
                 $product->load($id);
-            } else {
-                $date = new Zend_Date(time(), null, 'ru_RU');
-                $product->setData('created_at', $date->toString(Varien_Date::DATETIME_INTERNAL_FORMAT));
             }
             $product->addData($this->getRequest()->getParam('data'));
-            $product->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
+            print_R($this->getRequest()->getParam('data'));
             $product->save();
-            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_product')->__('Product has been saved successfully.'));
+            Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Product has been saved successfully.'));
             $this->_redirect('*/*/index');
 
         } catch (Exception $e) {
-
+die($e->getMessage());
         }
 
 

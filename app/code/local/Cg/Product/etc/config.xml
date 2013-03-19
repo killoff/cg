@@ -17,9 +17,9 @@
                     <product>
                         <table>cg_product</table>
                     </product>
-                    <product_category>
+                    <category>
                         <table>cg_product_category</table>
-                    </product_category>
+                    </category>
                 </entities>
             </cg_product_resource>
         </models>

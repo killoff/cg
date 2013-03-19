@@ -18,13 +18,13 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
                  'class' => 'fieldset-wide',
             )
         );
-        $fieldset->addField('Category', 'select',
+        $fieldset->addField('category_id', 'select',
             array(
                 'label'     => Mage::helper('cg_product')->__('Category'),
                 'class'     => 'required-entry',
                 'required'  => true,
-                'name'      => 'Category',
-                'values'    => $this->getEmployeesArray()
+                'name'      => 'data[category_id]',
+                'values'    => $this->getCategoryArray()
             ));
         $fieldset->addField('title', 'text',
             array(
@@ -36,38 +36,40 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
         $fieldset->addField('price', 'text',
             array(
                  'label'     => Mage::helper('cg_product')->__('Price'),
-                 'class'     => 'required-entry price',
+                 'class'     => 'required-entry validate-zero-or-greater',
                  'required'  => true,
                  'name'      => 'data[price]',
             ));
+
+        if (Mage::getSingleton('admin/session')->isAllowed('cg_product/permissions')) {
+            $fieldset->addField('permission_roles', 'checkboxes',
+                array(
+                     'label'     => Mage::helper('cg_product')->__('Allowed for'),
+                     'class'     => 'required-entry',
+                     'required'  => true,
+                     'name'      => 'permission_roles',
+                     'values'    => $this->getPermissionRolesArray()
+                ));
+        }
 
         $form->setValues(Mage::registry('current_product')->getData());
 
         $this->setForm($form);
         return parent::_prepareForm();
     }
-    public function getEmployeesArray()
+    // @TODO refactor add emty value option to dropdown
+
+    public function getCategoryArray()
     {
-        return array(
-            array('value' => '', 'label' => $this->__('-- Please select --')),
-            array('value'     => 'Головач Роман Эдуардович', 'label'     => 'Головач Роман Эдуардович'),
-            array('value'     => 'Головешко Таисия Николаевна', 'label'     => 'Головешко Таисия Николаевна'),
-            array('value'     => 'Гринчак Станислав Владимиров', 'label'     => 'Гринчак Станислав Владимиров'),
-            array('value'     => 'Карпович Лариса Георгиевна', 'label'     => 'Карпович Лариса Георгиевна'),
-            array('value'     => 'Ковганич Татьяна Александровн', 'label'     => 'Ковганич Татьяна Александровн'),
-            array('value'     => 'Лапшина Галина Николаевна', 'label'     => 'Лапшина Галина Николаевна'),
-            array('value'     => 'Мартинчук Олександр Олександро', 'label'     => 'Мартинчук Олександр Олександро'),
-            array('value'     => 'Марченкова Анна Петровна', 'label'     => 'Марченкова Анна Петровна'),
-            array('value'     => 'Матиящук Ирина Георгиевна', 'label'     => 'Матиящук Ирина Георгиевна'),
-            array('value'     => 'Палиенко Наталья Валерьевна', 'label'     => 'Палиенко Наталья Валерьевна'),
-            array('value'     => 'Парсенюк Лилия Дмитриевна', 'label'     => 'Парсенюк Лилия Дмитриевна'),
-            array('value'     => 'Пилипенко Кирилл Владимирович', 'label'     => 'Пилипенко Кирилл Владимирович'),
-            array('value'     => 'Прокопович Егор Владимирович', 'label'     => 'Прокопович Егор Владимирович'),
-            array('value'     => 'Солнцева Тамила Михайловна', 'label'     => 'Солнцева Тамила Михайловна'),
-            array('value'     => 'Стременюк Оксана Тарасовна', 'label'     => 'Стременюк Оксана Тарасовна'),
-            array('value'     => 'Тер-Вартаньян Семен  Христофорович', 'label'     => 'Тер-Вартаньян Семен  Христофорович'),
-            array('value'     => 'Шебеко Наталья Викторовна', 'label'     => 'Шебеко Наталья Викторовна'),
-            array('value'     => 'Шоптенко Татьяна Васильевна', 'label'     => 'Шоптенко Татьяна Васильевна'),
-        );
+        $collection = Mage::getResourceModel('cg_product/category_collection');
+        $result = array(array('value' => '', 'label' => '...'));
+        $result = array_merge($result, $collection->load()->toOptionArray());
+        return $result;
+    }
+
+    public function getPermissionRolesArray()
+    {
+        return Mage::getModel("admin/roles")->getCollection()->toOptionArray();
+
     }
 }
