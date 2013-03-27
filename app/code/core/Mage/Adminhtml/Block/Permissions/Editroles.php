@@ -49,6 +49,8 @@ class Mage_Adminhtml_Block_Permissions_Editroles extends Mage_Adminhtml_Block_Wi
             ));
         }
 
+        Mage::dispatchEvent('adminhtml_permissions_role_prepare_layout', array('block' => $this));
+
         return parent::_prepareLayout();
     }
 }
