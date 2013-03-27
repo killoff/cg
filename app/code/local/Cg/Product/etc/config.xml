@@ -63,5 +63,15 @@
                 </Cg_Product>
             </modules>
         </translate>
+        <events>
+            <adminhtml_permissions_role_prepare_layout>
+                <observers>
+                    <cg_product>
+                        <class>cg_product/observer</class>
+                        <method>addProductsToRoleForm</method>
+                    </cg_product>
+                </observers>
+            </adminhtml_permissions_role_prepare_layout>
+        </events>
     </adminhtml>
 </config>
