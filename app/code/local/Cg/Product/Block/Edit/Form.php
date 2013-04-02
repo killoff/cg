@@ -42,14 +42,18 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
             ));
 
         if (Mage::getSingleton('admin/session')->isAllowed('cg_product/permissions')) {
-            $fieldset->addField('permission_roles', 'checkboxes',
+            $fieldset->addField('user_roles', 'checkboxes',
                 array(
                      'label'     => Mage::helper('cg_product')->__('Allowed for'),
                      'class'     => 'required-entry',
                      'required'  => true,
-                     'name'      => 'permission_roles',
+                     'name'      => 'user_roles[]',
                      'values'    => $this->getPermissionRolesArray()
                 ));
+
+            if ($this->_getCurrentProduct()->getId()) {
+                $form->getElement('user_roles')->setChecked($this->_getCurrentProduct()->getRoleIds());
+            }
         }
 
         $form->setValues(Mage::registry('current_product')->getData());
@@ -71,5 +75,10 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
     {
         return Mage::getModel("admin/roles")->getCollection()->toOptionArray();
 
+    }
+
+    protected function _getCurrentProduct()
+    {
+        return Mage::registry('current_product');
     }
 }

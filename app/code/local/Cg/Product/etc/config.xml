@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Cg_Product>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </Cg_Product>
     </modules>
     <global>
@@ -20,6 +20,9 @@
                     <category>
                         <table>cg_product_category</table>
                     </category>
+                    <user_roles>
+                        <table>cg_product_user_roles</table>
+                    </user_roles>
                 </entities>
             </cg_product_resource>
         </models>

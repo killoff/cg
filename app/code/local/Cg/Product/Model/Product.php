@@ -12,9 +12,15 @@ class Cg_Product_Model_Product extends Mage_Core_Model_Abstract
 
     protected function _beforeSave()
     {
+//        Mage::getResourceHelper()
     }
 
     protected function _afterLoad()
     {
+    }
+
+    public function getRoleIds()
+    {
+        return Mage::getResourceHelper('cg_product')->getProductRoleIds($this->getId());
     }
 }

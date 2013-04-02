@@ -113,13 +113,16 @@ class Cg_Product_Adminhtml_ProductController extends Mage_Adminhtml_Controller_A
                 $product->load($id);
             }
             $product->addData($this->getRequest()->getParam('data'));
-            print_R($this->getRequest()->getParam('data'));
             $product->save();
+
+            $roleIds = $this->getRequest()->getParam('user_roles', array());
+            Mage::getResourceHelper('cg_product')->saveProductRoleIds($product->getId(), $roleIds);
+
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Product has been saved successfully.'));
             $this->_redirect('*/*/index');
 
         } catch (Exception $e) {
-die($e->getMessage());
+            die($e->getMessage());
         }
 
 
