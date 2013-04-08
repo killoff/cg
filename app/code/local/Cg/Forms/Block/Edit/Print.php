@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Visit_Print extends Cg_Kernel_Block_Adminhtml_Template_Smarty
+class Cg_Forms_Block_Edit_Print extends Cg_Kernel_Block_Adminhtml_Template_Smarty
 {
     protected $_template = 'form/print.tpl';
 

@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Visit extends Mage_Adminhtml_Block_Widget_Grid_Container
+class Cg_Forms_Block_List extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
 
     /**
@@ -7,13 +7,9 @@ class Cg_Forms_Block_Visit extends Mage_Adminhtml_Block_Widget_Grid_Container
      */
     public function __construct()
     {
-        $this->_controller = 'visit';
+        $this->_controller = 'list';
         $this->_blockGroup = 'cg_forms';
-//        $this->_addButtonLabel = Mage::helper('enterprise_banner')->__('Add Banner');
-
-
         $this->_headerText = Mage::helper('cms')->__('Manage Customer Visits');
-
         parent::__construct();
 
         if ($this->_isAllowedAction('save')) {
@@ -32,7 +28,7 @@ class Cg_Forms_Block_Visit extends Mage_Adminhtml_Block_Widget_Grid_Container
      */
     protected function _isAllowedAction($action)
     {
-        return Mage::getSingleton('admin/session')->isAllowed('cg_forms/visit/' . $action);
+        return Mage::getSingleton('admin/session')->isAllowed('cg_forms/' . $action);
     }
 
 }

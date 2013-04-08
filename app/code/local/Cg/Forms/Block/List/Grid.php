@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Visit_Grid extends Mage_Adminhtml_Block_Widget_Grid
+class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
 
     public function __construct()

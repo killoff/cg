@@ -39,7 +39,7 @@ class Cg_Forms_Adminhtml_ReservationController extends Mage_Adminhtml_Controller
          * Append customers block to content
          */
         $this->_addContent(
-            $this->getLayout()->createBlock('cg_forms/reservation', 'reservation_list')
+            $this->getLayout()->createBlock('cg_forms/reservation_list')
         );
 
         /**

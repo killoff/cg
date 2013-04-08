@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Cg_Forms>
-            <version>1.0.0.1</version>
+            <version>1.0.0.0</version>
         </Cg_Forms>
     </modules>
     <global>
@@ -14,11 +14,11 @@
             <cg_forms_resource>
                 <class>Cg_Forms_Model_Resource</class>
                 <entities>
-                    <visit>
-                        <table>cg_forms_visit</table>
-                    </visit>
+                    <form>
+                        <table>cg_form</table>
+                    </form>
                     <reservation>
-                        <table>cg_forms_reservation</table>
+                        <table>cg_reservation</table>
                     </reservation>
                 </entities>
             </cg_forms_resource>
@@ -69,7 +69,7 @@
             <adminhtml>
                 <args>
                     <modules>
-                        <reward before="Mage_Adminhtml">Cg_Forms_Adminhtml</reward>
+                        <cg_forms before="Mage_Adminhtml">Cg_Forms_Adminhtml</cg_forms>
                     </modules>
                 </args>
             </adminhtml>

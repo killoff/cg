@@ -32,8 +32,8 @@
         <customer>
             <children>
                 <visit translate="title" module="cg_forms">
-                    <title>Customer Visits</title>
-                    <action>adminhtml/visit</action>
+                    <title>Customer Forms</title>
+                    <action>adminhtml/forms</action>
                     <sort_order>200</sort_order>
                     <depends>
                         <!--<config>cg_forms/general/is_enabled</config>-->

@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Reservation_Grid extends Mage_Adminhtml_Block_Widget_Grid
+class Cg_Forms_Block_Reservation_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
 
     public function __construct()

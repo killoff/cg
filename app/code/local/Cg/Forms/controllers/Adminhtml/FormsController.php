@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Adminhtml_VisitController extends Mage_Adminhtml_Controller_Action
+class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Action
 {
     /**
      * Init actions
@@ -39,7 +39,7 @@ class Cg_Forms_Adminhtml_VisitController extends Mage_Adminhtml_Controller_Actio
          * Append customers block to content
          */
         $this->_addContent(
-            $this->getLayout()->createBlock('cg_forms/visit', 'visit_list')
+            $this->getLayout()->createBlock('cg_forms/list')
         );
 
         /**

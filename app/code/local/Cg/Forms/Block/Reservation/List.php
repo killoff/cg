@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Reservation extends Mage_Adminhtml_Block_Widget_Grid_Container
+class Cg_Forms_Block_Reservation_List extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
 
     /**
@@ -7,7 +7,7 @@ class Cg_Forms_Block_Reservation extends Mage_Adminhtml_Block_Widget_Grid_Contai
      */
     public function __construct()
     {
-        $this->_controller = 'reservation';
+        $this->_controller = 'reservation_list';
         $this->_blockGroup = 'cg_forms';
         $this->_headerText = Mage::helper('cms')->__('Manage Reservation');
 

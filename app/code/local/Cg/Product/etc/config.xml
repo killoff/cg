@@ -50,7 +50,7 @@
             <adminhtml>
                 <args>
                     <modules>
-                        <reward before="Mage_Adminhtml">Cg_Product_Adminhtml</reward>
+                        <cg_product before="Mage_Adminhtml">Cg_Product_Adminhtml</cg_product>
                     </modules>
                 </args>
             </adminhtml>
