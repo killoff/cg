@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Model_Resource_Visit_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
+class Cg_Forms_Model_Resource_Form_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
     /**
      * Define resource model
@@ -7,7 +7,7 @@ class Cg_Forms_Model_Resource_Visit_Collection extends Mage_Core_Model_Resource_
      */
     protected function _construct()
     {
-        $this->_init('cg_forms/visit');
+        $this->_init('cg_forms/form');
 //        $this->_map['fields']['page_id'] = 'main_table.page_id';
 //        $this->_map['fields']['store']   = 'store_table.store_id';
     }

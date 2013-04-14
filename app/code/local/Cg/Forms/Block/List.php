@@ -9,11 +9,11 @@ class Cg_Forms_Block_List extends Mage_Adminhtml_Block_Widget_Grid_Container
     {
         $this->_controller = 'list';
         $this->_blockGroup = 'cg_forms';
-        $this->_headerText = Mage::helper('cms')->__('Manage Customer Visits');
+        $this->_headerText = Mage::helper('cms')->__('Manage Customer Forms');
         parent::__construct();
 
         if ($this->_isAllowedAction('save')) {
-            $this->_updateButton('add', 'label', Mage::helper('cg_forms')->__('Add Visit'));
+            $this->_updateButton('add', 'label', Mage::helper('cg_forms')->__('Add Form'));
         } else {
             $this->_removeButton('add');
         }

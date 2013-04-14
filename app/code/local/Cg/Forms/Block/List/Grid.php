@@ -5,14 +5,14 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
     public function __construct()
     {
         parent::__construct();
-        $this->setId('visitGrid');
+        $this->setId('formGrid');
         $this->setDefaultSort('created');
         $this->setDefaultDir('desc');
     }
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getModel('cg_forms/visit')->getCollection();
+        $collection = Mage::getModel('cg_forms/form')->getCollection();
         /* @var $collection Mage_Cms_Model_Mysql4_Page_Collection */
 //        $collection->setFirstStoreFlag(true);
         $this->setCollection($collection);

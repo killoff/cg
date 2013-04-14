@@ -5,11 +5,11 @@ class Cg_Forms_Block_Edit_Print extends Cg_Kernel_Block_Adminhtml_Template_Smart
 
     protected function _beforeToHtml()
     {
-        $visit = Mage::registry('current_visit');
-        $this->assign('data', $visit);
-        $customer = Mage::getModel('customer/customer')->load($visit->getCustomerId());
+        $form = Mage::registry('current_form');
+        $this->assign('data', $form);
+        $customer = Mage::getModel('customer/customer')->load($form->getCustomerId());
         $this->assign('customer', $customer->getData());
-        $employee = Mage::getModel('admin/user')->load($visit->getAdminId());
+        $employee = Mage::getModel('admin/user')->load($form->getAdminId());
         $this->assign('employee', $employee->getData());
         return parent::_beforeToHtml();
     }

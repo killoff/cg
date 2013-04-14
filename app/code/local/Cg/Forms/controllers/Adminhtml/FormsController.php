@@ -10,7 +10,7 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     {
         // load layout, set active menu and breadcrumbs
         $this //->loadLayout()
-            ->_setActiveMenu('customer/visit')
+            ->_setActiveMenu('customer/form')
 //            ->_addBreadcrumb(Mage::helper('cg_forms')->__('CMS'), Mage::helper('cms')->__('CMS'))
             ->_addBreadcrumb(Mage::helper('cms')->__('Manage Customer Visits'), Mage::helper('cms')->__('Manage Customer Visits'))
         ;
@@ -58,18 +58,19 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
 
     public function newAction()
     {
-        $visit = Mage::getModel('cg_forms/visit');
+        $this->getRequest()->setParam('customer_id', 1);
+        $form = Mage::getModel('cg_forms/form');
         if ($this->getRequest()->getParam('id')) {
-            $visit->load($this->getRequest()->getParam('id'));
+            $form->load($this->getRequest()->getParam('id'));
         } elseif (!$this->getRequest()->getParam('customer_id')) {
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Для добавления осмотра выберите пациента.'));
             $this->_redirect('*/customer');
             return;
         }
-        Mage::register('current_visit', $visit);
+        Mage::register('current_form', $form);
         $this->loadLayout();
         $this->_addContent(
-            $this->getLayout()->createBlock('cg_forms/visit_edit')
+            $this->getLayout()->createBlock('cg_forms/edit')
         );
         $this->renderLayout();
     }
@@ -109,19 +110,22 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     {
         try {
             /** @var $visit Cg_Forms_Model_Visit */
-            $visit = Mage::getModel('cg_forms/visit');
+            $form = Mage::getModel('cg_forms/form');
             $id = $this->getRequest()->getParam('id');
             if ($id) {
-                $visit->load($id);
+                $form->load($id);
             }
-            $visit->addData($this->getRequest()->getParam('data'));
-            $visit->setRowData($this->getRequest()->getParam('row_data'));
-            $visit->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
-            $date = new Zend_Date($this->getRequest()->getParam('user_date'), null, 'ru_RU');
-            $visit->setData('user_date', $date->toString(Varien_Date::DATETIME_INTERNAL_FORMAT));
-            $visit->save();
-            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Visit has been saved successfully.'));
-            $this->_redirect('*/*/edit', array('id' => $visit->getId()));
+
+            $form->setCustomerId($this->getRequest()->getParam('customer_id'));
+            $form->setProductId($this->getRequest()->getParam('product_id'));
+            $form->setRowData($this->getRequest()->getParam('row_data'));
+            $form->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
+//            $date = new Zend_Date($this->getRequest()->getParam('user_date'), null, 'ru_RU');
+//            $visit->setData('user_date', $date->toString(Varien_Date::DATETIME_INTERNAL_FORMAT));
+            $form->save();
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Form has been saved successfully.'));
+//            $this->_redirect('*/*/index', array('id' => $visit->getId()));
+            $this->_redirect('*/*/index');
 
         } catch (Exception $e) {
 

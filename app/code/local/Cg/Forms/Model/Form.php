@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Model_Visit extends Mage_Core_Model_Abstract
+class Cg_Forms_Model_Form extends Mage_Core_Model_Abstract
 {
     /**
      * Initialize resource model
@@ -7,7 +7,7 @@ class Cg_Forms_Model_Visit extends Mage_Core_Model_Abstract
      */
     protected function _construct()
     {
-        $this->_init('cg_forms/visit');
+        $this->_init('cg_forms/form');
     }
 
     protected function _beforeSave()

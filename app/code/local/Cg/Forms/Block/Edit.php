@@ -31,10 +31,10 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 
     public function getHeaderText()
     {
-        if( Mage::registry('current_product')->getId() ) {
-            return Mage::helper('cg_product')->__("Edit Form '%s'", $this->htmlEscape(Mage::registry('current_form')->getId()));
+        if( Mage::registry('current_form')->getId() ) {
+            return Mage::helper('cg_forms')->__("Edit Form '%s'", $this->htmlEscape(Mage::registry('current_form')->getId()));
         } else {
-            return Mage::helper('cg_product')->__('New Form');
+            return Mage::helper('cg_forms')->__('New Form');
         }
     }
 
