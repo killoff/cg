@@ -45,6 +45,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
         $fieldset->addField('files', 'uploader', array(
                 'label'     => Mage::helper('cg_forms')->__('Files'),
                 'name'      => 'files',
+                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
         ));
 
         if (Mage::registry('current_form')) {

@@ -29,7 +29,7 @@ class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Elem
         autoUpload: false,
         uploadButtonText: "sdfsdf",
         request: {
-        endpoint: "/catalog/?action=upload_gallery&i="
+        endpoint: "'.$this->getData('server_url').'"
         },
         display: {
         fileSizeOnSubmit: true
@@ -48,7 +48,7 @@ class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Elem
         .on("complete", function(event, id, filename) {
             completed++;
             if (completed == uploaded) {
-                location.reload();
+//                location.reload();
             }
         });
 

@@ -4,6 +4,7 @@
             <action method="addJs"><file>jquery/jquery-1.9.1.min.js</file></action>
             <action method="addJs"><file>jquery/noconflict.js</file></action>
             <action method="addJs"><file>fineuploader/client.min.js</file></action>
+            <action method="addCss"><name>fineuploader/fineuploader.css</name></action>
         </reference>
     </default>
 </layout>

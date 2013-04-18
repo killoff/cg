@@ -154,4 +154,9 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
         );
     }
 
+    public function uploadAction()
+    {
+        $this->getResponse()->setBody(json_encode(array('success' => true)));
+    }
+
 }
