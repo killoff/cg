@@ -5,4 +5,20 @@
             <version>1.0.0</version>
         </Cg_Kernel>
     </modules>
+    <global>
+        <blocks>
+            <cg_kernel>
+                <class>Cg_Kernel_Block</class>
+            </cg_kernel>
+        </blocks>
+    </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <cg_kernel>
+                    <file>cg/kernel.xml</file>
+                </cg_kernel>
+            </updates>
+        </layout>
+    </adminhtml>
 </config>

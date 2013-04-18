@@ -1,5 +1,5 @@
 <?php
-class Cg_Forms_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
+class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 {
     /**
      * @return Mage_Adminhtml_Block_Widget_Form
@@ -13,6 +13,8 @@ class Cg_Forms_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 
 
         $fieldset = $formControl->addFieldset('form_form', array('legend'=>Mage::helper('cg_forms')->__('Form information')));
+
+        $this->_addElementTypes($fieldset);
 
         $fieldset->addField('customer', 'select', array(
                 'label'     => Mage::helper('cg_forms')->__('Customer'),
@@ -30,18 +32,19 @@ class Cg_Forms_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
                 'values'    => $this->_getProductValues()
         ));
 
-        $fieldset->addField('description1', 'textarea', array(
+        $fieldset->addField('description1', 'wysiwyg', array(
                 'label'     => Mage::helper('cg_forms')->__('Conclusion'),
-                'class'     => 'required-entry',
-                'required'  => true,
                 'name'      => 'row_data[description1]',
         ));
 
-        $fieldset->addField('description2', 'textarea', array(
+        $fieldset->addField('description2', 'wysiwyg', array(
                 'label'     => Mage::helper('cg_forms')->__('Recommendation'),
-                'class'     => 'required-entry',
-                'required'  => true,
                 'name'      => 'row_data[description2]',
+        ));
+
+        $fieldset->addField('files', 'uploader', array(
+                'label'     => Mage::helper('cg_forms')->__('Files'),
+                'name'      => 'files',
         ));
 
         if (Mage::registry('current_form')) {

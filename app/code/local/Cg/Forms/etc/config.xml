@@ -76,13 +76,6 @@
         </routers>
     </admin>
     <adminhtml>
-        <layout>
-            <updates>
-                <cg_forms>
-                    <file>cg/customer.xml</file>
-                </cg_forms>
-            </updates>
-        </layout>
         <translate>
             <modules>
                 <Cg_Forms>

@@ -1,0 +1,9 @@
+<layout>
+    <default>
+        <reference name="head">
+            <action method="addJs"><file>jquery/jquery-1.9.1.min.js</file></action>
+            <action method="addJs"><file>jquery/noconflict.js</file></action>
+            <action method="addJs"><file>fineuploader/client.min.js</file></action>
+        </reference>
+    </default>
+</layout>
