@@ -4,16 +4,13 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     /**
      * Init actions
      *
-     * @return Mage_Adminhtml_Cms_PageController
+     * @return Cg_Forms_Adminhtml_FormsController
      */
     protected function _initAction()
     {
-        // load layout, set active menu and breadcrumbs
-        $this //->loadLayout()
-            ->_setActiveMenu('customer/form')
-//            ->_addBreadcrumb(Mage::helper('cg_forms')->__('CMS'), Mage::helper('cms')->__('CMS'))
-            ->_addBreadcrumb(Mage::helper('cms')->__('Manage Customer Visits'), Mage::helper('cms')->__('Manage Customer Visits'))
-        ;
+        $this->_setActiveMenu('customer/form');
+        $this->_title($this->__('Customer Forms'));
+
         return $this;
     }
 
@@ -22,42 +19,30 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
      */
     public function indexAction()
     {
-        $this->_title($this->__('Customers'))->_title($this->__('Manage Customers'));
+        $this->loadLayout();
+        $this->_initAction();
 
         if ($this->getRequest()->getQuery('ajax')) {
             $this->_forward('grid');
             return;
         }
-        $this->loadLayout();
 
-        /**
-         * Set active menu item
-         */
-        $this->_setActiveMenu('customer/manage');
-
-        /**
-         * Append customers block to content
-         */
-        $this->_addContent(
-            $this->getLayout()->createBlock('cg_forms/list')
-        );
-
-        /**
-         * Add breadcrumb item
-         */
-        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Customers'), Mage::helper('adminhtml')->__('Customers'));
-        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Manage Customers'), Mage::helper('adminhtml')->__('Manage Customers'));
-
+        $this->_addContent($this->getLayout()->createBlock('cg_forms/list'));
         $this->renderLayout();
     }
 
     public function gridAction()
     {
-        $this->getResponse()->setBody($this->getLayout()->createBlock('cg_forms/visit_grid')->toHtml());
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('cg_forms/visit_grid')->toHtml()
+        );
     }
 
     public function newAction()
     {
+        $this->loadLayout();
+        $this->_initAction();
+        $this->_title($this->__('New Form'));
         $this->getRequest()->setParam('customer_id', 1);
         $form = Mage::getModel('cg_forms/form');
         if ($this->getRequest()->getParam('id')) {
@@ -68,7 +53,6 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
             return;
         }
         Mage::register('current_form', $form);
-        $this->loadLayout();
         $this->_addContent(
             $this->getLayout()->createBlock('cg_forms/edit')
         );
@@ -115,7 +99,6 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
             if ($id) {
                 $form->load($id);
             }
-
             $form->setCustomerId($this->getRequest()->getParam('customer_id'));
             $form->setProductId($this->getRequest()->getParam('product_id'));
             $form->setRowData($this->getRequest()->getParam('row_data'));
@@ -137,8 +120,8 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     {
         try {
             /** @var $visit Cg_Forms_Model_Visit */
-            $visit = Mage::getModel('cg_forms/visit')->load($this->getRequest()->getParam('id'))->delete();
-            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Visit has been deleted successfully.'));
+            $visit = Mage::getModel('cg_forms/form')->load($this->getRequest()->getParam('id'))->delete();
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Form has been deleted successfully.'));
             $this->_redirect('*/*/');
         } catch (Exception $e) {
 

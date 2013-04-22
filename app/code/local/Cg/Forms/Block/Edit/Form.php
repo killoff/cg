@@ -16,7 +16,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 
         $this->_addElementTypes($fieldset);
 
-        $fieldset->addField('customer', 'select', array(
+        $fieldset->addField('customer_id', 'select', array(
                 'label'     => Mage::helper('cg_forms')->__('Customer'),
                 'class'     => 'required-entry',
                 'required'  => true,
@@ -24,7 +24,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                 'values'    => $this->_getCustomerValues()
         ));
 
-        $fieldset->addField('product', 'select', array(
+        $fieldset->addField('product_id', 'select', array(
                 'label'     => Mage::helper('cg_forms')->__('Product'),
                 'class'     => 'required-entry',
                 'required'  => true,

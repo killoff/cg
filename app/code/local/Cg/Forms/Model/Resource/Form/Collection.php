@@ -36,8 +36,7 @@ class Cg_Forms_Model_Resource_Form_Collection extends Mage_Core_Model_Resource_D
                 'user.user_id=main_table.admin_id',
                 array('admin_name' => "CONCAT(user.firstname,' ',user.lastname)")
             );
-        $this->getSelect()->columns(array('fullname' => "CONCAT(cname.value,' ',cfname.value,' ',clname.value)"));
-//        echo $this->getSelect()->__toString();
+        $this->getSelect()->columns(array('fullname' => "CONCAT_WS(' ',cname.value,cfname.value,clname.value)"));
         return $this;
     }
 

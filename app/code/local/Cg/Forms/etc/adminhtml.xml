@@ -27,32 +27,44 @@
 -->
 <config>
     <acl>
+        <resources>
+            <admin>
+                <children>
+                    <customer>
+                        <children>
+                            <cg_forms translate="title">
+                                <title>Customer Forms</title>
+                                <sort_order>200</sort_order>
+                            </cg_forms>
+                            <cg_reservation translate="title">
+                                <title>Reservation</title>
+                                <sort_order>201</sort_order>
+                            </cg_reservation>
+                        </children>
+                    </customer>
+                </children>
+            </admin>
+        </resources>
     </acl>
     <menu>
         <customer>
             <children>
-                <visit translate="title" module="cg_forms">
+                <cg_forms translate="title" module="cg_forms">
                     <title>Customer Forms</title>
                     <action>adminhtml/forms</action>
                     <sort_order>200</sort_order>
                     <depends>
                         <!--<config>cg_forms/general/is_enabled</config>-->
                     </depends>
-                </visit>
-                <reservation translate="title" module="cg_forms">
+                </cg_forms>
+                <cg_reservation translate="title" module="cg_forms">
                     <title>Reservation</title>
                     <action>adminhtml/reservation</action>
                     <sort_order>201</sort_order>
                     <depends>
                         <!--<config>cg_forms/general/is_enabled</config>-->
                     </depends>
-                </reservation>
-                <group translate="title" module="customer">
-                    <!--<depends>-->
-                        <!--<config>cg_forms/menu</config>-->
-                    <!--</depends>-->
-                </group>
-
+                </cg_reservation>
             </children>
         </customer>
     </menu>
