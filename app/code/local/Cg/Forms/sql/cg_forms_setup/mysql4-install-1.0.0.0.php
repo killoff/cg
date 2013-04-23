@@ -25,6 +25,7 @@ $installer->run("
 CREATE TABLE `{$installer->getTable('cg_forms/reservation')}` (
   `reservation_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `admin_id` int(10) unsigned NOT NULL,
+  `employee` VARCHAR(255) NOT NULL,
   `status` VARCHAR(255) NOT NULL,
   `period` VARCHAR(255) NOT NULL,
   `fio` VARCHAR(255) NOT NULL,
