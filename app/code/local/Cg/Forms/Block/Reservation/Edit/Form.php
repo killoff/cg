@@ -132,7 +132,7 @@ class Cg_Forms_Block_Reservation_Edit_Form extends Mage_Adminhtml_Block_Widget_F
     {
         return array(
             array('value' => '', 'label' => $this->__('-- Please select --')),
-            array('label' => 'COC','value' => 'COC'),
+            array('label' => 'СОС','value' => 'СОС'),
             array('label' => 'Х','value' => 'Х'),
             array('label' => 'ПОВТ','value' => 'ПОВТ'),
             array('label' => 'ПЕРВ','value' => 'ПЕРВ'),
