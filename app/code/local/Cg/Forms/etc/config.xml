@@ -85,6 +85,13 @@
                 </Cg_Forms>
             </modules>
         </translate>
+        <layout>
+            <updates>
+                <cg_forms>
+                    <file>cg/forms.xml</file>
+                </cg_forms>
+            </updates>
+        </layout>
         <events>
         </events>
     </adminhtml>

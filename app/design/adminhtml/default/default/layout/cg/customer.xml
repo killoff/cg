@@ -2,11 +2,10 @@
 <layout>
     <adminhtml_customer_edit>
         <reference name="content">
-            <block type="adminhtml/customer_edit" name="customer_edit"></block>
+            <block type="adminhtml/customer_edit" name="customer_edit" />
         </reference>
         <reference name="left">
-            <block type="cg_customer/adminhtml_edit_tabs" name="customer_edit_tabs">
-            </block>
+            <block type="cg_customer/adminhtml_edit_tabs" name="customer_edit_tabs" />
         </reference>
     </adminhtml_customer_edit>
 </layout>

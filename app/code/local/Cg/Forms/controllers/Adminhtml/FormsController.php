@@ -34,7 +34,7 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     public function gridAction()
     {
         $this->getResponse()->setBody(
-            $this->getLayout()->createBlock('cg_forms/visit_grid')->toHtml()
+            $this->getLayout()->createBlock('cg_forms/list_grid')->toHtml()
         );
     }
 

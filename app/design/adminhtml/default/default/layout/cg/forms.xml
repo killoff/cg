@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_customer_edit>
+        <reference name="customer_edit_tabs">
+            <action method="addTab">
+                <name>cg_forms_customer_edit_tab_form</name>
+                <block>cg_forms/customer_edit_tab_form</block>
+            </action>
+        </reference>
+    </adminhtml_customer_edit>
+</layout>
