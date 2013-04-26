@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Cg_Permissions>
+            <version>1.0.0</version>
+        </Cg_Permissions>
+    </modules>
+    <global>
+        <blocks>
+            <cg_permissions>
+                <class>Cg_Permissions_Block</class>
+            </cg_permissions>
+        </blocks>
+    </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <cg_permissions>
+                    <file>cg/permissions.xml</file>
+                </cg_permissions>
+            </updates>
+        </layout>
+    </adminhtml>
+</config>
