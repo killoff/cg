@@ -19,5 +19,12 @@
                 <Mage_Customer/>
             </depends>
         </Cg_Forms>
+        <Cg_Customer>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mage_Customer/>
+            </depends>
+        </Cg_Customer>
     </modules>
 </config>
