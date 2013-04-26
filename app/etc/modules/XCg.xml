@@ -26,5 +26,13 @@
                 <Mage_Customer/>
             </depends>
         </Cg_Customer>
+        <Cg_Permissions>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Cg_Kernel/>
+                <Mage_Admin/>
+            </depends>
+        </Cg_Permissions>
     </modules>
 </config>
