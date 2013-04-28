@@ -48,7 +48,7 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
         if ($this->getRequest()->getParam('id')) {
             $form->load($this->getRequest()->getParam('id'));
         } elseif (!$this->getRequest()->getParam('customer_id')) {
-            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Для добавления осмотра выберите пациента.'));
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Select patient.'));
             $this->_redirect('*/customer');
             return;
         }

@@ -8,15 +8,16 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
     {
         parent::__construct();
         $this->setId('cg_forms_customer_edit_tab_form');
-        $this->setDefaultDir('ASC');
-        $this->setUseAjax(true);
     }
 
-    protected function _prepareCollection()
+    /**
+     * Defines after which tab, this tab should be rendered
+     *
+     * @return string
+     */
+    public function getAfter()
     {
-        $collection = new Varien_Data_Collection();
-        $this->setCollection($collection);
-        return parent::_prepareCollection();
+        return 'newsletter';
     }
 
     /**
@@ -26,7 +27,7 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
      */
     public function canShowTab()
     {
-        return true;
+        return (bool)Mage::registry('current_customer')->getId();
     }
 
     /**
@@ -57,15 +58,5 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
     public function getTabTitle()
     {
         return $this->getTabLabel();
-    }
-
-    /**
-     * Retrieve grid url
-     *
-     * @return string
-     */
-    public function getGridUrl()
-    {
-        return $this->getUrl('*/forms/grid', array('_current' => true));
     }
 }

@@ -8,6 +8,7 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $this->setId('formGrid');
         $this->setDefaultSort('created');
         $this->setDefaultDir('desc');
+        $this->setUseAjax(true);
     }
 
     protected function _prepareCollection()
@@ -25,19 +26,19 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $baseUrl = $this->getUrl();
 
         $this->addColumn('fullname', array(
-            'header'    => Mage::helper('cg_forms')->__('Пациент'),
+            'header'    => Mage::helper('cg_forms')->__('Patient'),
             'align'     => 'left',
             'index'     => 'fullname',
         ));
 
         $this->addColumn('employee', array(
-            'header'    => Mage::helper('cg_forms')->__('Врач'),
+            'header'    => Mage::helper('cg_forms')->__('Doctor'),
             'align'     => 'left',
             'index'     => 'admin_name',
         ));
 
         $this->addColumn('user_date', array(
-            'header'    => Mage::helper('cg_forms')->__('Дата'),
+            'header'    => Mage::helper('cg_forms')->__('Date'),
             'align'     => 'left',
             'index'     => 'user_date',
             'type'     => 'date',
@@ -123,10 +124,21 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
     /**
      * Row click url
      *
+     * @param $row
      * @return string
      */
     public function getRowUrl($row)
     {
         return $this->getUrl('*/*/edit', array('id' => $row->getId()));
+    }
+
+    /**
+     * Retrieve grid url
+     *
+     * @return string
+     */
+    public function getGridUrl()
+    {
+        return $this->getUrl('*/forms/grid');
     }
 }

@@ -16,4 +16,16 @@ class Cg_Customer_Block_Adminhtml_Edit_Tabs extends Mage_Adminhtml_Block_Custome
         }
         return parent::addTab($tabId, $tab);
     }
+
+    /**
+     * Set default active tab
+     */
+    protected function _updateActiveTab()
+    {
+        $activeTab = Mage::helper('cg_customer')->getDefaultActiveTab();
+        if (null !== $activeTab) {
+            $this->setActiveTab($activeTab);
+        }
+        parent::_updateActiveTab();
+    }
 }
