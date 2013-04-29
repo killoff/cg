@@ -1,7 +1,6 @@
 <?php
 class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -9,6 +8,7 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $this->setDefaultSort('created');
         $this->setDefaultDir('desc');
         $this->setUseAjax(true);
+        $this->setEmptyText(Mage::helper('cg_forms')->__('No Forms Found'));
     }
 
     protected function _prepareCollection()
@@ -139,6 +139,6 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
      */
     public function getGridUrl()
     {
-        return $this->getUrl('*/forms/grid');
+        return $this->getUrl('*/forms/grid', array('_current' => true));
     }
 }

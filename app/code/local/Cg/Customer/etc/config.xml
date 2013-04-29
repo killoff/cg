@@ -35,6 +35,11 @@
         </resources>
         <blocks>
             <cg_customer><class>Cg_Customer_Block</class></cg_customer>
+            <adminhtml>
+                <rewrite>
+                    <customer_edit_tabs>Cg_Customer_Block_Adminhtml_Edit_Tabs</customer_edit_tabs>
+                </rewrite>
+            </adminhtml>
         </blocks>
     </global>
     <admin>
@@ -58,20 +63,20 @@
                 </Cg_Customer>
             </modules>
         </translate>
-        <layout>
-            <updates>
-                <customer>
-                    <file>cg/customer.xml</file>
-                </customer>
-            </updates>
-        </layout>
+        <!--<layout>-->
+            <!--<updates>-->
+                <!--<customer>-->
+                    <!--<file>cg/customer.xml</file>-->
+                <!--</customer>-->
+            <!--</updates>-->
+        <!--</layout>-->
         <allowed_tabs>
             <account>
                 <default />
             </account>
             <addresses/>
             <newsletter/>
-            <cg_forms_customer_edit_tab_form/>
+            <customer_edit_tab_forms/>
         </allowed_tabs>
     </adminhtml>
 </config>

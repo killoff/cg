@@ -3,9 +3,12 @@
     <adminhtml_customer_edit>
         <reference name="customer_edit_tabs">
             <action method="addTab">
-                <name>cg_forms_customer_edit_tab_form</name>
+                <name>customer_edit_tab_forms</name>
                 <block>cg_forms/customer_edit_tab_form</block>
             </action>
         </reference>
     </adminhtml_customer_edit>
+    <adminhtml_forms_grid>
+        <block type="cg_forms/customer_edit_tab_form" name="customer.forms.edit.tab" output="toHtml" />
+    </adminhtml_forms_grid>
 </layout>

@@ -7,7 +7,7 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
     public function __construct()
     {
         parent::__construct();
-        $this->setId('cg_forms_customer_edit_tab_form');
+        $this->setId('customer_edit_tab_forms');
     }
 
     /**
