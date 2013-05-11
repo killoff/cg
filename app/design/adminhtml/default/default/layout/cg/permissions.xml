@@ -1,7 +1,0 @@
-<layout>
-    <adminhtml_permissions_user_edit>
-        <reference name="left">
-            <block type="cg_permissions/user_edit_tabs" name="adminhtml.permissions.user.edit.tabs"/>
-        </reference>
-    </adminhtml_permissions_user_edit>
-</layout>

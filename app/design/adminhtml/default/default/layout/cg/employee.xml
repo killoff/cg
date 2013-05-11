@@ -1,0 +1,21 @@
+<layout>
+    <adminhtml_permissions_user_edit>
+        <reference name="adminhtml.permissions.user.edit.tabs">
+            <block type="cg_employee/user_edit_tab_products" name="cg.employee.user.edit.tab.products"/>
+            <block type="cg_employee/user_edit_tab_schedule" name="cg.employee.user.edit.tab.schedule"/>
+            <action method="addTabAfter">
+                <id>cg_employee_user_tab_products</id>
+                <block>cg.employee.user.edit.tab.products</block>
+                <after>main_section</after>
+            </action>
+            <action method="addTabAfter">
+                <id>cg_employee_user_tab_schedule</id>
+                <block>cg.employee.user.edit.tab.schedule</block>
+                <after>main_section</after>
+            </action>
+            <action method="removeTab">
+                <id>api2_roles_section</id>
+            </action>
+        </reference>
+    </adminhtml_permissions_user_edit>
+</layout>

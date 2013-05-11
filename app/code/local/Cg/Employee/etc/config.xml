@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-        <Cg_Permissions>
+        <Cg_Employee>
             <version>1.0.0</version>
-        </Cg_Permissions>
+        </Cg_Employee>
     </modules>
     <global>
         <blocks>
-            <cg_permissions>
-                <class>Cg_Permissions_Block</class>
-            </cg_permissions>
+            <cg_employee>
+                <class>Cg_Employee_Block</class>
+            </cg_employee>
         </blocks>
     </global>
     <adminhtml>
         <layout>
             <updates>
-                <cg_permissions>
-                    <file>cg/permissions.xml</file>
-                </cg_permissions>
+                <cg_employee>
+                    <file>cg/employee.xml</file>
+                </cg_employee>
             </updates>
         </layout>
     </adminhtml>
