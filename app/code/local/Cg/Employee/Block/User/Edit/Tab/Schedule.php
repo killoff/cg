@@ -50,4 +50,9 @@ class Cg_Employee_Block_User_Edit_Tab_Schedule extends Mage_Adminhtml_Block_Temp
     {
         return false;
     }
+
+    public function getActive()
+    {
+        return true;
+    }
 }

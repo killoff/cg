@@ -5,6 +5,9 @@
             <action method="addJs"><file>jquery/noconflict.js</file></action>
             <action method="addJs"><file>fineuploader/client.min.js</file></action>
             <action method="addCss"><name>fineuploader/fineuploader.css</name></action>
+            <action method="addJs"><file>fullcalendar/jquery/jquery-ui-1.10.2.custom.min.js</file></action>
+            <action method="addJs"><file>fullcalendar/fullcalendar.min.js</file></action>
+            <action method="addCss"><name>fullcalendar/fullcalendar.css</name></action>
         </reference>
     </default>
 </layout>

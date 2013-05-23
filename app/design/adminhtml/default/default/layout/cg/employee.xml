@@ -16,6 +16,10 @@
             <action method="removeTab">
                 <id>api2_roles_section</id>
             </action>
+            <action method="setActiveTab">
+                <id>cg_employee_user_tab_schedule</id>
+            </action>
+            <remove name="adminhtml.permissions.user.edit.tab.roles.js"/>
         </reference>
     </adminhtml_permissions_user_edit>
 </layout>
