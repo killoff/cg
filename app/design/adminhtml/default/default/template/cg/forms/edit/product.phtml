@@ -1,0 +1,5 @@
+<h1><?php echo $this->__('Select product to proceed with form') ?></h1>
+
+<?php foreach ($this->getEmployeeProducts() as $product): ?>
+    <div><a href="<?php echo $this->getUrl('*/*/*', array('product_id' => $product->getId())) ?>"><?php echo $product->getTitle() ?></a> (<?php echo $product->getPrice() ?>)</div>
+<?php endforeach  ?>

@@ -1,8 +1,7 @@
 <div id="calendar" style="width:800px;"></div>
-
+<input type="hidden" name="schedule" id="user_schedule" value="">
 <script type="text/javascript">
     var schedule = [];
-    var employeeId = "2";
 
     function jsDateToString(date)
     {
@@ -10,22 +9,6 @@
     }
 
     $j(document).ready(function($) {
-
-//        $('#save_schedule').click(function(e) {
-//            var services = [];
-//            $('input[name^="services["]:checked').each(function(){
-//                services.push(this.value);
-//            });
-//
-//            $.post(
-//                "/app_dev.php/employee/save_schedule",
-//                {'schedule': schedule, 'services': services, 'employeeId' : employeeId},
-//                function() {
-//                    alert('Данные сохранены');
-//                }
-//            );
-//        });
-
         var date = new Date();
         var d = date.getDate();
         var m = date.getMonth();
@@ -47,33 +30,24 @@
             monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthNamesShort: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             dayNames: ['Воскресенье',     'Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота'],
-//            selectable: true,
-//            selectHelper: true,
+            selectable: true,
+            selectHelper: true,
             select: function(start, end, allDay) {
                 var selected = {title: "", start: start, end: end, allDay: allDay};
                 calendar.fullCalendar('renderEvent', selected, true);  // make the event "stick"
                 schedule.push({start: jsDateToString(start), end: jsDateToString(end)});
-                //                   schedule = {start: jsDateToString(start), end: jsDateToString(end)};
+                $('#user_schedule').val(JSON.stringify(schedule));
                 calendar.fullCalendar('unselect');
             },
             editable: true,
-            events: [
-                {
-                    id: '39',
-                    title: '',
-                    start: '2012-10-09 09:00:00',
-                    end: '2012-10-09 18:00:00',
-                    allDay: false
-                }
-
-            ],
-            timeFormat: 'HH:mm-HH:mm',
-            axisFormat: 'HH:mm',
+            events: <?php echo $this->getScheduleJson() ?>,
+//            timeFormat: 'HH:mm-HH:mm',
+//            axisFormat: 'HH:mm',
             //firstHour: 8,
             minTime: 8,
             maxTime: 19,
             firstDay: 1,
-            weekends: false,x n;
+            weekends: false,
             defaultView: 'agendaWeek',
             contentHeight: 600
         });

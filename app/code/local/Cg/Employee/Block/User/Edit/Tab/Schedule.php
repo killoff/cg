@@ -55,4 +55,22 @@ class Cg_Employee_Block_User_Edit_Tab_Schedule extends Mage_Adminhtml_Block_Temp
     {
         return true;
     }
+
+    public function getScheduleJson()
+    {
+        $userId = Mage::registry('permissions_user')->getId();
+        $schedule = Mage::getResourceHelper('cg_employee')->getSchedule($userId);
+        $result = array();
+        foreach ($schedule as $row) {
+            $result[] = array(
+                'title' => '',
+                'start' => $row['time_start'],
+                'end' => $row['time_end'],
+                'allDay' => false,
+                'id' => $row['schedule_id'],
+            );
+        }
+        return Mage::helper('core')->jsonEncode($result,Zend_Json::TYPE_OBJECT);
+
+    }
 }

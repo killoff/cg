@@ -6,11 +6,46 @@
         </Cg_Employee>
     </modules>
     <global>
+        <models>
+            <cg_employee>
+                <class>Cg_Employee_Model</class>
+                <resourceModel>cg_employee_resource</resourceModel>
+            </cg_employee>
+            <cg_employee_resource>
+                <class>Cg_Employee_Model_Resource</class>
+                <entities>
+                    <product>
+                        <table>cg_employee_product</table>
+                    </product>
+                    <schedule>
+                        <table>cg_employee_schedule</table>
+                    </schedule>
+                </entities>
+            </cg_employee_resource>
+        </models>
+        <resources>
+            <cg_employee_setup>
+                <setup>
+                    <module>Cg_Employee</module>
+                    <!--<class>Cg_Product_Model_Resource_Setup</class>-->
+                </setup>
+            </cg_employee_setup>
+        </resources>
         <blocks>
             <cg_employee>
                 <class>Cg_Employee_Block</class>
             </cg_employee>
         </blocks>
+        <events>
+            <admin_user_save_after>
+                <observers>
+                    <cg_employee>
+                        <class>cg_employee/observer</class>
+                        <method>saveEmployeeData</method>
+                    </cg_employee>
+                </observers>
+            </admin_user_save_after>
+        </events>
     </global>
     <adminhtml>
         <layout>

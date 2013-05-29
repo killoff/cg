@@ -1,1 +1,27 @@
-
+<?php foreach ($this->getCategories() as $category): ?>
+    <?php $products = $category->getProductsCollection() ?>
+    <?php if ($products->count() > 0): ?>
+        <div class="cat" style="padding:5px 0px 0px 0px;">
+            <input type="checkbox" id="c<?php echo $category->getId() ?>" class="product-category"<?php if ($category->getIsSelected()): ?> checked="checked"<?php endif ?>>
+            <label for="c<?php echo $category->getId() ?>"><?php echo $category->getTitle() ?><label>
+            <?php foreach ($products as $product): ?>
+                <?php $productId = $product->getId() ?>
+                <div style="padding:0px 0px 5px 20px;">
+                    <input type="checkbox"
+                           id="p<?php echo $productId ?>"
+                           class="c<?php echo $category->getId() ?>-product"
+                           name="product[<?php echo $productId ?>]"
+                           value="<?php echo $productId ?>"
+                        <?php if ($product->getIsSelected()): ?> checked="checked"<?php endif ?>
+                            >
+                    <label for="p<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?><label>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endif ?>
+<?php endforeach ?>
+<script type="text/javascript">
+    $j('.product-category').click(function() {
+        $j('.' + this.id + '-product').prop('checked', this.checked);
+    })
+</script>

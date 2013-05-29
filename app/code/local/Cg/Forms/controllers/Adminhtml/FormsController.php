@@ -33,6 +33,8 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
 
     public function gridAction()
     {
+        $this->loadLayout()->renderLayout();
+        return $this;
         $this->getLayout()->getUpdate()
             ->addHandle(strtolower($this->getFullActionName()));
         $this->loadLayoutUpdates()->generateLayoutXml()->generateLayoutBlocks();
@@ -41,6 +43,14 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
 
     public function newAction()
     {
+        $productId = $this->getRequest()->getParam('product_id');
+        if (!$productId) {
+            $this->loadLayout();
+            $this->_addContent($this->getLayout()->createBlock('cg_forms/edit_product'));
+            $this->renderLayout();
+            return;
+        }
+
         $this->loadLayout();
         $this->_initAction();
         $this->_title($this->__('New Form'));
