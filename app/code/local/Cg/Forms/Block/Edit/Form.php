@@ -9,13 +9,25 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
         $formControl = new Varien_Data_Form(array('id' => 'edit_form'));
         $formControl->setUseContainer(true);
         $formControl->setMethod('post');
-        $formControl->setAction($this->getUrl('*/*/save'));
+        $formControl->setAction($this->getUrl('*/*/save', array('_current' => true)));
 
 
-        $fieldset = $formControl->addFieldset('form_form', array('legend'=>Mage::helper('cg_forms')->__('Form information')));
+        $fieldset = $formControl->addFieldset('form_form', array('legend'=>Mage::helper('cg_forms')->__('Form information'), 'class'     => 'fieldset-wide'));
 
         $this->_addElementTypes($fieldset);
-
+        $fieldset->addField('customer_id', 'note',
+            array(
+                'label'     => Mage::helper('cg_forms')->__('Customer'),
+                'text'    => Mage::registry('current_customer')->getName()
+             )
+        );
+        $fieldset->addField('product_id', 'note',
+            array(
+                'label'     => Mage::helper('cg_forms')->__('Product'),
+                'text'    => Mage::registry('current_product')->getTitle()
+             )
+        );
+/*
         $fieldset->addField('customer_id', 'select', array(
                 'label'     => Mage::helper('cg_forms')->__('Customer'),
                 'class'     => 'required-entry',
@@ -31,25 +43,21 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                 'name'      => 'product_id',
                 'values'    => $this->_getProductValues()
         ));
+*/
 
         $fieldset->addField('description1', 'wysiwyg', array(
                 'label'     => Mage::helper('cg_forms')->__('Conclusion'),
                 'name'      => 'row_data[description1]',
         ));
 
-        $fieldset->addField('description2', 'wysiwyg', array(
-                'label'     => Mage::helper('cg_forms')->__('Recommendation'),
-                'name'      => 'row_data[description2]',
-        ));
-
-        $fieldset->addField('files', 'uploader', array(
-                'label'     => Mage::helper('cg_forms')->__('Files'),
-                'name'      => 'files',
-                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
-        ));
+//        $fieldset->addField('files', 'uploader', array(
+//                'label'     => Mage::helper('cg_forms')->__('Files'),
+//                'name'      => 'files',
+//                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
+//        ));
 
         if (Mage::registry('current_form')) {
-            $formControl->setValues(Mage::registry('current_form')->getData());
+//            $formControl->setValues(Mage::registry('current_form')->getData());
         }
 
         $this->setForm($formControl);

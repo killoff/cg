@@ -59,4 +59,20 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
     {
         return $this->getTabLabel();
     }
+
+    /**
+     * Row click url
+     *
+     * @param $row
+     * @return string
+     */
+    public function getRowUrl($row)
+    {
+        return $this->getUrl('*/forms/edit', array('id' => $row->getId()));
+    }
+
+    public function getCustomerId()
+    {
+        return Mage::registry('current_customer')->getId();
+    }
 }

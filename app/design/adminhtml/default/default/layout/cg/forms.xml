@@ -11,4 +11,11 @@
     <adminhtml_forms_grid>
         <block type="cg_forms/customer_edit_tab_form" name="customer.forms.edit.tab" output="toHtml" />
     </adminhtml_forms_grid>
+    <adminhtml_customer_edit>
+        <reference name="customer_edit">
+            <block type="cg_forms/customer_edit_buttons" name="customer.forms.edit.buttons">
+                <action method="prepareButtons"></action>
+            </block>
+        </reference>
+    </adminhtml_customer_edit>
 </layout>

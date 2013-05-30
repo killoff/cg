@@ -43,27 +43,37 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
 
     public function newAction()
     {
-        $productId = $this->getRequest()->getParam('product_id');
-        if (!$productId) {
+        $form = Mage::getModel('cg_forms/form');
+        if ($this->getRequest()->getParam('id')) {
+            $form->load($this->getRequest()->getParam('id'));
+        }
+        Mage::register('current_form', $form);
+
+        $productId = $this->getRequest()->getParam('product_id', $form->getProductId());
+        if ($productId) {
+            $product = Mage::getModel('cg_product/product')->load($productId);
+            Mage::register('current_product', $product);
+        } else {
             $this->loadLayout();
             $this->_addContent($this->getLayout()->createBlock('cg_forms/edit_product'));
             $this->renderLayout();
             return;
         }
 
-        $this->loadLayout();
-        $this->_initAction();
-        $this->_title($this->__('New Form'));
-        $this->getRequest()->setParam('customer_id', 1);
-        $form = Mage::getModel('cg_forms/form');
-        if ($this->getRequest()->getParam('id')) {
-            $form->load($this->getRequest()->getParam('id'));
-        } elseif (!$this->getRequest()->getParam('customer_id')) {
+        $customerId = $this->getRequest()->getParam('customer_id', $form->getCustomerId());
+        if ($customerId) {
+            $customer = Mage::getModel('customer/customer')->load($customerId);
+            Mage::register('current_customer', $customer);
+        } else {
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Select patient.'));
             $this->_redirect('*/customer');
             return;
         }
-        Mage::register('current_form', $form);
+
+        $this->loadLayout();
+        $this->_initAction();
+        $this->_title($this->__('New Form'));
+
         $this->_addContent(
             $this->getLayout()->createBlock('cg_forms/edit')
         );

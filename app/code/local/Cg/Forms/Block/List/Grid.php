@@ -14,8 +14,9 @@ class Cg_Forms_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
     protected function _prepareCollection()
     {
         $collection = Mage::getModel('cg_forms/form')->getCollection();
-        /* @var $collection Mage_Cms_Model_Mysql4_Page_Collection */
-//        $collection->setFirstStoreFlag(true);
+        if ($this->getCustomerId()) {
+            $collection->addFieldToFilter('customer_id', $this->getCustomerId());
+        }
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
