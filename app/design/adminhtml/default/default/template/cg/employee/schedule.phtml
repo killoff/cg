@@ -1,5 +1,21 @@
 <div id="calendar" style="width:800px;"></div>
 <input type="hidden" name="schedule" id="user_schedule" value="">
+
+
+<div id="event-form">
+    <form>
+        <fieldset>
+            <label for="name">Room</label>
+            <select id="room">
+                <option value="">...</option>
+                <?php foreach ($this->getRooms() as $room): ?>
+                <option value="<?php echo $room->getId() ?>"><?php echo $room->getName() ?></option>
+                <?php endforeach ?>
+            </select>
+        </fieldset>
+    </form>
+</div>
+
 <script type="text/javascript">
     var schedule = [];
 
@@ -29,15 +45,16 @@
             dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthNamesShort: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            dayNames: ['Воскресенье',     'Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота'],
+            dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота'],
             selectable: true,
             selectHelper: true,
             select: function(start, end, allDay) {
-                var selected = {title: "", start: start, end: end, allDay: allDay};
-                calendar.fullCalendar('renderEvent', selected, true);  // make the event "stick"
-                schedule.push({start: jsDateToString(start), end: jsDateToString(end)});
-                $('#user_schedule').val(JSON.stringify(schedule));
-                calendar.fullCalendar('unselect');
+                $("#event-form")
+                    .dialog("option", "start", start)
+                    .dialog("option", "end", end)
+                    .dialog("option", "allDay", allDay)
+                    .dialog("open");
+
             },
             editable: true,
             events: <?php echo $this->getScheduleJson() ?>,
@@ -50,8 +67,54 @@
             weekends: false,
             defaultView: 'agendaWeek',
             contentHeight: 600
+//            select: function(start, end, allDay) {
+//                var title = prompt('Event Title:');
+//                if (title) {
+//                    calendar.fullCalendar('renderEvent',
+//                        {
+//                            title: title,
+//                            start: start,
+//                            end: end,
+//                            allDay: allDay
+//                        },
+//                        true // make the event "stick"
+//                    );
+//                }
+//                calendar.fullCalendar('unselect');
+//            }
+
         });
 
-
+        $("#event-form").dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: [
+                {
+                    text: "Add",
+                    click: function() {
+                        $('#room').removeClass( "ui-state-error" );
+                        if ($('#room').val() != "") {
+                            var selected = {title: $("#room option:selected").text(), start: $(this).dialog('option', 'start'), end: $(this).dialog('option', 'end'), allDay: $(this).dialog('option', 'allDay')};
+                            calendar.fullCalendar('renderEvent', selected, true);  // make the event "stick"
+                            schedule.push({start: jsDateToString(selected.start), end: jsDateToString(selected.end), room: $('#room').val()});
+                            $('#user_schedule').val(JSON.stringify(schedule));
+                            calendar.fullCalendar('unselect');
+                            $('#room').val("");
+                            $(this).dialog("close");
+                        } else {
+                            $('#room').addClass('ui-state-error');
+                        }
+                    }
+                },
+                {
+                    text: "Cancel",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
     });
 </script>

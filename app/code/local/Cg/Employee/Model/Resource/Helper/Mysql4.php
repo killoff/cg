@@ -42,7 +42,8 @@ class Cg_Employee_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_
     {
         $adapter = $this->_getReadAdapter();
         $select = $adapter->select()
-            ->from($this->_getEmployeeScheduleTable())
+            ->from(array('s' => $this->_getEmployeeScheduleTable()))
+            ->joinLeft(array('r' => 'cg_office_room'), 's.room_id=r.room_id', array('room_name' => 'r.name'))
             ->where('user_id=?', (int)$userId);
 
         return $adapter->fetchAll($select);
@@ -52,7 +53,7 @@ class Cg_Employee_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_
     {
         $rows = array();
         foreach ($schedule as $period) {
-            $rows[] = array('user_id' => $userId, 'time_start' => $period['start'], 'time_end' => $period['end'], 'type' => 1);
+            $rows[] = array('user_id' => $userId, 'start' => $period['start'], 'end' => $period['end'], 'room_id' => $period['room'], 'type' => 1);
         }
         return $this->_getWriteAdapter()->insertMultiple($this->_getEmployeeScheduleTable(), $rows);
 

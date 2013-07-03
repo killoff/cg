@@ -35,5 +35,21 @@
                 <Mage_Admin/>
             </depends>
         </Cg_Employee>
+        <Cg_Office>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Cg_Kernel/>
+                <Mage_Admin/>
+            </depends>
+        </Cg_Office>
+        <Cg_Register>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Cg_Kernel/>
+                <Mage_Admin/>
+            </depends>
+        </Cg_Register>
     </modules>
 </config>

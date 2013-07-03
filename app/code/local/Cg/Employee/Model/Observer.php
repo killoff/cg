@@ -15,6 +15,7 @@ class Cg_Employee_Model_Observer
 
         if ($user->hasData('schedule')) {
             try {
+//                print_R($user->getData('schedule'));exit;
                 $schedule = Mage::helper('core')->jsonDecode($user->getData('schedule'));
                 Mage::getResourceHelper('cg_employee')->saveSchedule($user->getId(), $schedule);
 

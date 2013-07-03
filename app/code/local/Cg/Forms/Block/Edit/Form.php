@@ -57,7 +57,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 //        ));
 
         if (Mage::registry('current_form')) {
-//            $formControl->setValues(Mage::registry('current_form')->getData());
+            $formControl->setValues(Mage::registry('current_form')->getData());
         }
 
         $this->setForm($formControl);

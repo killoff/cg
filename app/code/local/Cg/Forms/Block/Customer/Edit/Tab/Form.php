@@ -75,4 +75,27 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
     {
         return Mage::registry('current_customer')->getId();
     }
+
+    protected function _prepareColumns()
+    {
+        $this->addColumn('product', array(
+                                          'header'    => Mage::helper('cg_forms')->__('Product'),
+                                          'align'     => 'left',
+                                          'index'     => 'product',
+                                     ));
+
+        $this->addColumn('employee', array(
+                                          'header'    => Mage::helper('cg_forms')->__('Doctor'),
+                                          'align'     => 'left',
+                                          'index'     => 'admin_name',
+                                     ));
+
+        $this->addColumn('user_date', array(
+                                           'header'    => Mage::helper('cg_forms')->__('Date'),
+                                           'align'     => 'left',
+                                           'index'     => 'user_date',
+                                           'type'     => 'date',
+                                      ));
+    }
+
 }

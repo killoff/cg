@@ -53,4 +53,12 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
     {
         return false;
     }
+
+    public function getBackUrl()
+    {
+        return $this->getUrl('*/customer/edit', array(
+                                                 'id' => Mage::registry('current_customer')->getId(),
+                                                 'tab' => 'customer_info_tabs_customer_edit_tab_forms'
+                                            ));
+    }
 }

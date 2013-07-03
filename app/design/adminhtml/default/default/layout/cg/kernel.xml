@@ -3,9 +3,15 @@
         <reference name="head">
             <action method="addJs"><file>jquery/jquery-1.9.1.min.js</file></action>
             <action method="addJs"><file>jquery/noconflict.js</file></action>
+            <action method="addJs"><file>jqueryui/js/jquery-ui-1.10.3.custom.min.js</file></action>
+            <action method="addItem"><type>js_css</type><name>jqueryui/css/ui-lightness/jquery-ui-1.10.3.custom.min.css</name></action>
+
+            <!--<action method="addJs"><file>bootstrap/js/bootstrap.min.js</file></action>-->
+            <!--<action method="addItem"><type>js_css</type><name>bootstrap/css/bootstrap.css</name></action>-->
+
             <action method="addJs"><file>fineuploader/client.min.js</file></action>
             <action method="addCss"><name>fineuploader/fineuploader.css</name></action>
-            <action method="addJs"><file>fullcalendar/jquery/jquery-ui-1.10.2.custom.min.js</file></action>
+
             <action method="addJs"><file>fullcalendar/fullcalendar.min.js</file></action>
             <action method="addCss"><name>fullcalendar/fullcalendar.css</name></action>
         </reference>

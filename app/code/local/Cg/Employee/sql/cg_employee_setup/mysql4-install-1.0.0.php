@@ -17,8 +17,8 @@ $installer->run(
     "CREATE TABLE `{$installer->getTable('cg_employee/schedule')}` (
     schedule_id int(11) NOT NULL AUTO_INCREMENT,
     user_id int(11) unsigned NOT NULL,
-    time_start datetime NOT NULL,
-    time_end datetime NOT NULL,
+    start datetime NOT NULL,
+    end datetime NOT NULL,
     type smallint(6) NOT NULL,
     PRIMARY KEY (schedule_id),
     KEY user_id (user_id),

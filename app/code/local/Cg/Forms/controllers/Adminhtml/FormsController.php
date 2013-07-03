@@ -119,17 +119,21 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
             $id = $this->getRequest()->getParam('id');
             if ($id) {
                 $form->load($id);
+            } else {
+                $form->setCustomerId($this->getRequest()->getParam('customer_id'));
+                $form->setProductId($this->getRequest()->getParam('product_id'));
+                $form->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
             }
-            $form->setCustomerId($this->getRequest()->getParam('customer_id'));
-            $form->setProductId($this->getRequest()->getParam('product_id'));
             $form->setRowData($this->getRequest()->getParam('row_data'));
-            $form->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
 //            $date = new Zend_Date($this->getRequest()->getParam('user_date'), null, 'ru_RU');
 //            $visit->setData('user_date', $date->toString(Varien_Date::DATETIME_INTERNAL_FORMAT));
             $form->save();
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('Form has been saved successfully.'));
 //            $this->_redirect('*/*/index', array('id' => $visit->getId()));
-            $this->_redirect('*/*/index');
+            $this->_redirect('*/customer/edit', array(
+                                                     'id' => $form->getCustomerId(),
+                                                     'tab' => 'customer_info_tabs_customer_edit_tab_forms'
+                                                ));
 
         } catch (Exception $e) {
 
@@ -161,6 +165,31 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     public function uploadAction()
     {
         $this->getResponse()->setBody(json_encode(array('success' => true)));
+    }
+
+    public function scheduleAction()
+    {
+        $this->loadLayout();
+        $this->_addContent($this->getLayout()->createBlock('cg_forms/schedule'));
+        $this->renderLayout();
+    }
+
+    public function roomsAction()
+    {
+        if ($this->getRequest()->getParam('ajax')) {
+            $this->_forward('roomsAjax');
+            return;
+        }
+        $this->loadLayout();
+        $this->_addContent($this->getLayout()->createBlock('cg_forms/rooms'));
+        $this->renderLayout();
+    }
+
+    public function roomsAjaxAction()
+    {
+        $this->getResponse()->setBody($this->getLayout()->createBlock('cg_forms/rooms')->toHtml());
+//        $this->loadLayout();
+//        $this->renderLayout();
     }
 
 }

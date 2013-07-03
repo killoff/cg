@@ -63,14 +63,20 @@ class Cg_Employee_Block_User_Edit_Tab_Schedule extends Mage_Adminhtml_Block_Temp
         $result = array();
         foreach ($schedule as $row) {
             $result[] = array(
-                'title' => '',
-                'start' => $row['time_start'],
-                'end' => $row['time_end'],
+                'title' => $row['room_name'],
+                'start' => $row['start'],
+                'end' => $row['end'],
                 'allDay' => false,
                 'id' => $row['schedule_id'],
             );
         }
         return Mage::helper('core')->jsonEncode($result,Zend_Json::TYPE_OBJECT);
 
+    }
+
+
+    public function getRooms()
+    {
+        return Mage::getModel('cg_office/room')->getCollection();
     }
 }

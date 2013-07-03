@@ -32,6 +32,11 @@ class Cg_Forms_Model_Resource_Form_Collection extends Mage_Core_Model_Resource_D
                 array('lastname' => 'value')
             )
             ->join(
+                array('p' => 'cg_product'),
+                'p.product_id=main_table.product_id',
+                array('product' => 'title')
+            )
+            ->join(
                 array('user' => 'admin_user'),
                 'user.user_id=main_table.admin_id',
                 array('admin_name' => "CONCAT(user.firstname,' ',user.lastname)")
