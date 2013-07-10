@@ -1,0 +1,16 @@
+<form>
+    <fieldset>
+        <label for="name">Product</label>
+
+        <select id="room">
+            <option value="">...</option>
+            <?php foreach ($this->getProducts() as $product): ?>
+                <option value=""><?php echo $product->getTitle() ?></option>
+            <?php endforeach  ?>
+        </select><br><br>
+        <label for="name">Time</label><br>
+        <input type="radio"> 10:00 - 10:45<br>
+        <input type="radio"> 10:45 - 11:30<br>
+        <input type="radio"> 11:30 - 12:15<br>
+    </fieldset>
+</form>

@@ -166,30 +166,4 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     {
         $this->getResponse()->setBody(json_encode(array('success' => true)));
     }
-
-    public function scheduleAction()
-    {
-        $this->loadLayout();
-        $this->_addContent($this->getLayout()->createBlock('cg_forms/schedule'));
-        $this->renderLayout();
-    }
-
-    public function roomsAction()
-    {
-        if ($this->getRequest()->getParam('ajax')) {
-            $this->_forward('roomsAjax');
-            return;
-        }
-        $this->loadLayout();
-        $this->_addContent($this->getLayout()->createBlock('cg_forms/rooms'));
-        $this->renderLayout();
-    }
-
-    public function roomsAjaxAction()
-    {
-        $this->getResponse()->setBody($this->getLayout()->createBlock('cg_forms/rooms')->toHtml());
-//        $this->loadLayout();
-//        $this->renderLayout();
-    }
-
 }

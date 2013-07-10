@@ -1,0 +1,217 @@
+<style type="text/css">
+    #schedule-container {
+        border: 0px;
+        width:900px;
+        height:800px;
+        overflow-y: scroll;
+        float: left;
+    }
+    .bordered {
+        border-radius: 5px;
+        border: 0px;
+
+    }
+    div.room {
+        float: left;
+        width:180px;
+        margin-left: 5px;
+
+        /*margin:3px;*/
+    }
+    div.room-part {
+        margin: 1px;
+    }
+    .free{
+        background:#fff;
+    }
+    .busy{
+        background:#dceaf4;
+    }
+    .visitor{
+        background:#0088cc;
+        color:#fff;
+    }
+
+    div.t {
+        width:30px;
+        height:31px;
+    }
+
+    div.t.small {
+        font-size: 6pt;
+    }
+
+</style>
+
+
+<div style="width: 100%;float: left;">
+    <div id="schedule-container">
+        <?php foreach ($this->getAll() as $day): ?>
+            <div style="clear:both;" id="day<?php echo $day['date'] ?>">
+            <h2><?php echo $day['date'] ?></h2>
+            <div id="timeline" style="float:left;margin-top:20px">
+                <?php for($i=9; $i < 20; $i++): ?>
+                    <div class="t"><?php echo $i ?><sup>00</sup></div><div class="t small"></div>
+                <?php endfor ?>
+            </div>
+            <?php foreach ($day['rooms'] as $room): ?>
+            <div id="room<?php echo $room['room_id'] ?>" class="room bordered free">
+                <span class="title"><?php echo $room['name'] ?></span>
+                <?php foreach ($room['schedule'] as $schedule): ?>
+                    <?php if ($schedule['generated']): ?>
+                        <div class="bordered free" id="doctor1" style="height: <?php echo $schedule['height'] ?>px; border: 1px solid slategray;">
+                            <?php echo 'с '. $schedule['start_time'] .' до '.$schedule['end_time'] ?>
+<!--                            <span style="font-size:20pt;">+</span>-->
+                        </div>
+                    <?php else: ?>
+                        <div class="bordered busy" id="doctor<?php echo $schedule['user_id'] ?>" style="height: <?php echo $schedule['height'] ?>px; border: 1px solid slategray;">
+                            <?php foreach ($schedule['register'] as $register): ?>
+                                <?php if ($register['generated']): ?>
+                                    <div class="bordered busy" id="doctor<?php echo $schedule['user_id'] ?>free" style="height: <?php echo $register['height'] ?>px; border: 1px solid slategray;">
+                                        <?php echo 'с '. $register['start_time'] .' до '.$register['end_time'] ?>
+                                        <span style="font-size:20pt;" group="add-register" user_id="<?php echo $schedule['user_id'] ?>" start="<?php echo $register['start'] ?>" end="<?php echo $register['end'] ?>">+</span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="room-part bordered visitor" id="visit1" style="height:  <?php echo $register['height'] ?>px;">
+                                        <?php echo $register['customer_name'] ?>
+                                        <?php echo 'с '. $register['start_time'] .' до '.$register['end_time'] ?>
+                                    </div>
+                                <?php endif ?>
+                            <?php endforeach ?>
+                        </div>
+                    <?php endif ?>
+                <?php endforeach ?>
+            </div>
+            <?php endforeach ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+
+    <div id="employees" style="float: left;margin: 50px;">
+
+        <div id="datepicker"></div>
+
+        <h2>По сотрудникам</h2>
+        <?php foreach ($this->getUsers() as $user): ?>
+            <div><input type="checkbox" id="emp<?php echo $user->getId() ?>"> <label for="emp<?php echo $user->getId() ?>"><?php echo $user->getName() ?></label></div>
+        <?php endforeach ?>
+        <br>
+        <br>
+        <h2>По услугам</h2>
+        <?php foreach ($this->getCategories() as $category): ?>
+            <?php $products = $category->getProductsCollection() ?>
+            <?php if ($products->count() > 0): ?>
+                <div class="cat" style="padding:5px 0px 0px 0px;">
+                    <input type="checkbox" id="c<?php echo $category->getId() ?>" class="product-category"<?php if ($category->getIsSelected()): ?> checked="checked"<?php endif ?>>
+                    <label for="c<?php echo $category->getId() ?>"><?php echo $category->getTitle() ?><label>
+                            <?php foreach ($products as $product): ?>
+                                <?php $productId = $product->getId() ?>
+                                <div style="padding:0px 0px 5px 20px;">
+                                    <input type="checkbox"
+                                           id="p<?php echo $productId ?>"
+                                           class="c<?php echo $category->getId() ?>-product"
+                                           name="product[<?php echo $productId ?>]"
+                                           value="<?php echo $productId ?>"
+                                        <?php if ($product->getIsSelected()): ?> checked="checked"<?php endif ?>
+                                        >
+                                    <label for="p<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?><label>
+                                </div>
+                            <?php endforeach ?>
+                </div>
+            <?php endif ?>
+        <?php endforeach ?>
+        <script type="text/javascript">
+        </script>
+    </div>
+
+</div>
+
+<div id="register-form">
+    <div id="server"></div>
+</div>
+
+
+<script>
+
+    $j(function($) {
+
+        $.fn.scrollTo = function( target, options, callback ){
+            if(typeof options == 'function' && arguments.length == 2){ callback = options; options = target; }
+            var settings = $.extend({
+                scrollTarget  : target,
+                offsetTop     : 50,
+                duration      : 500,
+                easing        : 'swing'
+            }, options);
+            return this.each(function(){
+                var scrollPane = $(this);
+                var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
+                var scrollY = (typeof scrollTarget == "number") ? scrollTarget : scrollTarget.offset().top + scrollPane.scrollTop() - parseInt(settings.offsetTop);
+                scrollPane.animate({scrollTop : scrollY }, parseInt(settings.duration), settings.easing, function(){
+                    if (typeof callback == 'function') { callback.call(this); }
+                });
+            });
+        }
+
+        $('.product-category').click(function() {
+            $('.' + this.id + '-product').prop('checked', this.checked);
+        });
+
+        $( "#datepicker" ).datepicker({onSelect: function(selectedDate) {
+            $('#schedule-container').scrollTo('#day' + selectedDate);
+        },
+            dateFormat: "yy-mm-dd"
+        });
+
+        $("#register-form").dialog({
+            autoOpen: false,
+            height: 500,
+            width: 500,
+            modal: true,
+            buttons: [
+                {
+                    text: "Add",
+                    click: function() {
+                    }
+                },
+                {
+                    text: "Cancel",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+
+        $('span[group="add-register"]').click(function(e) {
+            var start_date = $(this).attr('start');
+            var end_date = $(this).attr('end');
+            var user = $(this).attr('user_id');
+            $.get('<?php echo $this->getUrl('*/*/addRegister') ?>', {start: start_date, end: end_date, user_id: user}, function(response) {
+                $('#server').html(response);
+                $("#register-form").dialog("open");
+            })
+        });
+
+<!--        $('#next_day').click(function(e) {-->
+<!--            $.get('--><?php //echo $this->getAjaxUrl() ?><!--', {}, function(response) {-->
+<!--                $('#ajax_cont').html(response);-->
+<!--            });-->
+<!--        });-->
+        $( "#visit1" ).draggable({ revert: "invalid" });
+//        $( "#visit2" ).draggable({ revert: "invalid" });
+
+        $( "#doctor2free" ).droppable({
+            activeClass: "ui-state-hover",
+            hoverClass: "ui-state-active",
+            drop: function( event, ui ) {
+//                $( this )
+//                    .addClass( "ui-state-highlight" )
+//                    .find( "p" )
+//                    .html( "Dropped!" );
+            }
+        });
+    });
+
+
+</script>

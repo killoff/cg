@@ -1,3 +1,27 @@
 <?xml version="1.0"?>
 <config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <cg_register translate="title" module="cg_office">
+                        <title>Register</title>
+                        <sort_order>50</sort_order>
+                        <children>
+                            <manage translate="title">
+                                <title>Manage Registered</title>
+                            </manage>
+                        </children>
+                    </cg_register>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <menu>
+        <cg_register translate="title" module="cg_register">
+            <title>Register</title>
+            <sort_order>0</sort_order>
+            <action>adminhtml/register</action>
+        </cg_register>
+    </menu>
 </config>
