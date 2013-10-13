@@ -70,11 +70,17 @@ require_once $mageFilename;
 
 #Varien_Profiler::enable();
 
-if (isset($_SERVER['MAGE_IS_DEVELOPER_MODE'])) {
+//if (isset($_SERVER['MAGE_IS_DEVELOPER_MODE'])) {
     Mage::setIsDeveloperMode(true);
-}
+    include MAGENTO_ROOT . '/lib/FirePHP/fb.php';
 
-#ini_set('display_errors', 1);
+/* NOTE: You must have Output Buffering enabled via
+         ob_start() or output_buffering ini directive. */
+
+
+//}
+
+ini_set('display_errors', 1);
 
 umask(0);
 
