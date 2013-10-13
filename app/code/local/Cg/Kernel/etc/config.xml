@@ -11,6 +11,11 @@
                 <class>Cg_Kernel_Block</class>
             </cg_kernel>
         </blocks>
+        <helpers>
+            <cg_kernel>
+                <class>Cg_Kernel_Helper</class>
+            </cg_kernel>
+        </helpers>
     </global>
     <adminhtml>
         <layout>
