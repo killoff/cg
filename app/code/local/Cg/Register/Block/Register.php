@@ -8,22 +8,29 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
     protected $_isScheduleGrouped = false;
     protected $_groupedSchedule = array();
 
-
-    public function __construct()
+    protected function _construct()
     {
-        parent::__construct();
+        parent::_construct();
+
+        /** @var Cg_Kernel_Helper_Data $helper */
+        $helper = Mage::helper('cg_kernel');
+        $periodStart = $helper->todayStart();
+        $periodEnd = $helper->todayStart()->addDay(20); // add three weeks
         $this->_options = array(
-            'period_start' => '2013-07-02 00:00:00',
-            'period_end' => '2013-07-30 23:59:59',
+            'period_start' => Varien_Date::formatDate($periodStart),
+            'period_end' => Varien_Date::formatDate($periodEnd),
             'day_start' => '09:00:00',
             'day_end' => '19:00:00',
         );
+        $customerId = $this->getRequest()->get('customer_id');
+        if ($customerId) {
+            $customer = Mage::getModel('customer/customer')->load($customerId);
+            $this->setCustomer($customer);
+        }
     }
-
 
     public function getAll()
     {
-
         $result = array();
         foreach ($this->getDays() as $day) {
             $dayDate = $day->format('Y-m-d');
@@ -78,6 +85,7 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
         foreach ($schedule as &$item) {
             if (!$item['generated']) {
                 $item['register'] = $this->getRegister($item);
+
             }
         }
         return $schedule;
@@ -95,7 +103,7 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
             $this->_register = $result;
         }
         $scheduleId = $schedule['schedule_id'];
-        return isset($this->_register[$scheduleId]) ? $this->addMissingIntervals($schedule['start'], $schedule['end'], $this->_register[$scheduleId]) : array();
+        return $this->addMissingIntervals($schedule['start'], $schedule['end'], isset($this->_register[$scheduleId]) ? $this->_register[$scheduleId] : array());
     }
 
     protected function _groupSchedule()

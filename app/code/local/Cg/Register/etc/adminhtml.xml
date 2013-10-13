@@ -17,11 +17,11 @@
             </admin>
         </resources>
     </acl>
-    <menu>
+    <!--menu>
         <cg_register translate="title" module="cg_register">
             <title>Register</title>
             <sort_order>0</sort_order>
             <action>adminhtml/register</action>
         </cg_register>
-    </menu>
+    </menu-->
 </config>

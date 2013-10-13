@@ -1,16 +1,20 @@
-<form>
+<form id="register-form" action="<?php echo $this->getSaveUrl() ?>" method="post">
+    Запись пациента <?php echo $this->getCustomerName() ?>
+    к <?php echo $this->getEmployeeName() ?>
+    на <?php echo $this->getDayDate() ?>
     <fieldset>
         <label for="name">Product</label>
 
-        <select id="room">
+        <select id="product" name="product_id">
             <option value="">...</option>
             <?php foreach ($this->getProducts() as $product): ?>
-                <option value=""><?php echo $product->getTitle() ?></option>
+                <option value="<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?></option>
             <?php endforeach  ?>
         </select><br><br>
         <label for="name">Time</label><br>
-        <input type="radio"> 10:00 - 10:45<br>
-        <input type="radio"> 10:45 - 11:30<br>
-        <input type="radio"> 11:30 - 12:15<br>
+        <?php foreach ($this->getTimePeriods() as $period): ?>
+            <input type="radio" name="period" id="<?php echo $period->getEnd() ?>" value="<?php echo $period->getValue() ?>"><label for="<?php echo $period->getEnd() ?>"><?php echo $period->getStartTime() ?> &ndash; <?php echo $period->getEndTime() ?></label><br>
+        <?php endforeach ?>
     </fieldset>
 </form>
+<!--<div id="output"></div>-->

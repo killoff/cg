@@ -14,7 +14,6 @@ class Cg_Register_Adminhtml_RegisterController extends Mage_Adminhtml_Controller
     {
         $this->_setActiveMenu('register');
         $this->_title($this->__('Register'));
-
         return $this;
     }
 
@@ -23,5 +22,10 @@ class Cg_Register_Adminhtml_RegisterController extends Mage_Adminhtml_Controller
         $this->loadLayout();
         $this->_addContent($this->getLayout()->createBlock('cg_register/register'));
         $this->renderLayout();
+    }
+
+    public function createAction()
+    {
+        $this->_forward('index');
     }
 }

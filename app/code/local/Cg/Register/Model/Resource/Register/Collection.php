@@ -8,6 +8,7 @@ class Cg_Register_Model_Resource_Register_Collection extends Mage_Core_Model_Res
     protected function _construct()
     {
         $this->_init('cg_register/register');
+        $this->setOrder('start');
     }
 
     public function joinInformation()

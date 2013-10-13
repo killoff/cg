@@ -12,19 +12,45 @@ class Cg_Register_Block_Form extends Mage_Adminhtml_Block_Template
         return $collection;
     }
 
-    public function getTimeIntervals()
+    public function getCustomerName()
     {
+        return Mage::getModel('customer/customer')->load($this->getCustomerId())->getName();
+    }
+
+    public function getEmployeeName()
+    {
+        return Mage::getModel('admin/user')->load($this->getUserId())->getName();
+    }
+
+    public function getDayDate()
+    {
+        return Varien_Date::formatDate($this->getStart(), false);
+    }
+
+    public function getTimePeriods()
+    {
+        /** @var Cg_Register_Helper_Schedule $helper */
+        $helper = Mage::helper('cg_register/schedule');
+        $periods = $helper->getAvailablePeriods($this->getScheduleId(), $this->getStart());
         $result = array();
-        $start = new DateTime($this->getStartDate());
-        $end = new DateTime($this->getEndDate());
-
-//        $intervalEnd =
-        while($start < $end) {
-            $start =
-            $result[] = array('start' => $start, 'end' => $start->add(new DateInterval('P1H')));
-
+        foreach ($periods as $period) {
+            $start = $period['start'];
+            $end = $period['end'];
+            $startString = $start->format(Varien_Date::DATETIME_PHP_FORMAT);
+            $endString = $end->format(Varien_Date::DATETIME_PHP_FORMAT);
+            $result[] = new Varien_Object(array(
+                'start' => $startString,
+                'end' => $endString,
+                'start_time' => $start->format('H:i'),
+                'end_time' => $end->format('H:i'),
+                'value' => $startString . '.' . $endString
+            ));
         }
+        return $result;
+    }
 
-
+    public function getSaveUrl()
+    {
+        return $this->getUrl('*/register_ajax/save', array('schedule_id' => $this->getScheduleId(), 'customer_id' => $this->getCustomerId()));
     }
 }
