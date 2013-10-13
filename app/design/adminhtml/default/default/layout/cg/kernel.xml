@@ -4,6 +4,7 @@
             <action method="addJs"><file>jquery/jquery-1.9.1.min.js</file></action>
             <action method="addJs"><file>jquery/noconflict.js</file></action>
             <action method="addJs"><file>jqueryui/js/jquery-ui-1.10.3.custom.min.js</file></action>
+            <action method="addJs"><file>jquery/jquery.form.min.js</file></action>
             <action method="addItem"><type>js_css</type><name>jqueryui/css/ui-lightness/jquery-ui-1.10.3.custom.min.css</name></action>
 
             <!--<action method="addJs"><file>bootstrap/js/bootstrap.min.js</file></action>-->
