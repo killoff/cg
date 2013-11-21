@@ -1,7 +1,16 @@
 <?php
 
-class Cg_Customer_Block_Adminhtml_Edit_Tabs extends Mage_Adminhtml_Block_Customer_Edit_Tabs
+class Cg_Customer_Block_Adminhtml_Edit_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setId('customer_info_tabs');
+        $this->setDestElementId('edit_form');
+        $this->setTitle(Mage::helper('customer')->__('Customer Information'));
+    }
+
     /**
      * Add only tabs that declared in config
      *
@@ -26,6 +35,31 @@ class Cg_Customer_Block_Adminhtml_Edit_Tabs extends Mage_Adminhtml_Block_Custome
         if (null !== $activeTab) {
             $this->setActiveTab($activeTab);
         }
-        parent::_updateActiveTab();
+        $tabId = $this->getRequest()->getParam('tab');
+        if( $tabId ) {
+            $tabId = preg_replace("#{$this->getId()}_#", '', $tabId);
+            if($tabId) {
+                $this->setActiveTab($tabId);
+            }
+        }
     }
+
+    protected function _beforeToHtml()
+    {
+        $this->addTab('account', array(
+                                      'label'     => Mage::helper('customer')->__('Account Information'),
+                                      'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_account')->initForm()->toHtml(),
+                                      'active'    => Mage::registry('current_customer')->getId() ? false : true
+                                 ));
+
+        $this->addTab('addresses', array(
+                                        'label'     => Mage::helper('customer')->__('Addresses'),
+                                        'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_addresses')->initForm()->toHtml(),
+                                   ));
+
+
+        $this->_updateActiveTab();
+        return parent::_beforeToHtml();
+    }
+
 }

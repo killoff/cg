@@ -38,6 +38,7 @@
             <adminhtml>
                 <rewrite>
                     <customer_edit_tabs>Cg_Customer_Block_Adminhtml_Edit_Tabs</customer_edit_tabs>
+                    <customer_edit_tab_view_accordion>Cg_Customer_Block_Adminhtml_Edit_Accordion</customer_edit_tab_view_accordion>
                 </rewrite>
             </adminhtml>
         </blocks>
