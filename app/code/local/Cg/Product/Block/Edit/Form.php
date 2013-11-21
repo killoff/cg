@@ -40,6 +40,13 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
                  'required'  => true,
                  'name'      => 'data[price]',
             ));
+        $fieldset->addField('duration', 'text',
+            array(
+                 'label'     => Mage::helper('cg_product')->__('Duration'),
+                 'class'     => 'required-entry validate-zero-or-greater',
+                 'required'  => true,
+                 'name'      => 'data[duration]',
+            ));
 
         if (true /*Mage::getSingleton('admin/session')->isAllowed('cg_product/permissions')*/) {
             $fieldset->addField('user_roles', 'checkboxes',

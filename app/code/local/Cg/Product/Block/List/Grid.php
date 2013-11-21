@@ -33,6 +33,11 @@ class Cg_Product_Block_List_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'type'     => 'price',
         ));
 
+        $this->addColumn('duration', array(
+            'header'    => Mage::helper('cg_product')->__('Duration'),
+            'index'     => 'duration'
+        ));
+
         return parent::_prepareColumns();
     }
 
