@@ -26,6 +26,11 @@ class Cg_Forms_Model_Form extends Mage_Core_Model_Abstract
                 $this->setData($k, $v);
             }
         }
+        $files = $this->getDataSetDefault('files', array());
+        foreach ($files as &$file) {
+            $file['url'] = '/media/forms/' . $file['name'];
+        }
+        $this->setFiles($files);
         return parent::_afterLoad();
     }
 }

@@ -33,6 +33,6 @@ class Cg_Forms_Block_Customer_Edit_Buttons extends Mage_Adminhtml_Block_Abstract
 
     protected function _getRegisterButtonUrl($customerId)
     {
-        return $this->getUrl('*/register/create', array('customer_id' => $customerId));
+        return $this->getUrl('*/register/start', array('customer_id' => $customerId));
     }
 }

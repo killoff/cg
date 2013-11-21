@@ -124,7 +124,18 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
                 $form->setProductId($this->getRequest()->getParam('product_id'));
                 $form->setAdminId(Mage::getSingleton('admin/session')->getUser()->getId());
             }
-            $form->setRowData($this->getRequest()->getParam('row_data'));
+            $files = is_array($form->getFiles()) ? $form->getFiles() : array();
+            $newFiles = $this->getRequest()->getPost('files', array());
+            foreach ($newFiles as $file) {
+                $info = json_decode($file,true);
+                if (is_file($info['path'])) {
+                    $files[] = array('path' => $info['path'], 'name' => pathinfo($info['path'], PATHINFO_BASENAME));
+                }
+            }
+            $rowData = $this->getRequest()->getParam('row_data');
+            $rowData['files'] = $files;
+            $form->setRowData($rowData);
+//            $date = new Zend_Date($this->getRequest()->getParam('user_date'), null, 'ru_RU');
 //            $date = new Zend_Date($this->getRequest()->getParam('user_date'), null, 'ru_RU');
 //            $visit->setData('user_date', $date->toString(Varien_Date::DATETIME_INTERNAL_FORMAT));
             $form->save();
@@ -138,9 +149,8 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
         } catch (Exception $e) {
 
         }
-
-
     }
+
     public function deleteAction()
     {
         try {
@@ -155,15 +165,25 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
 
     public function printAction()
     {
-        $visit = Mage::getModel('cg_forms/visit')->load($this->getRequest()->getParam('id'));
-        Mage::register('current_visit', $visit);
         $this->getResponse()->setBody(
-            $this->getLayout()->createBlock('cg_forms/visit_print')->toHtml()
+            $this->getLayout()->createBlock('cg_forms/print')->toHtml()
         );
     }
 
     public function uploadAction()
     {
-        $this->getResponse()->setBody(json_encode(array('success' => true)));
+        $extension = pathinfo($_FILES['qqfile']['name'], PATHINFO_EXTENSION);
+        $dest = Mage::app()->getConfig()->getOptions()->getMediaDir().'/forms/'.uniqid().'.'.$extension;
+        @copy($_FILES['qqfile']['tmp_name'], $dest);
+        if (is_file($dest)) {
+            $_FILES['qqfile']['path'] = $dest;
+        }
+        $this->getResponse()->setBody(
+            json_encode(
+                array(
+                     'success' => true, 'file' => $_FILES['qqfile']
+                )
+            )
+        );
     }
 }

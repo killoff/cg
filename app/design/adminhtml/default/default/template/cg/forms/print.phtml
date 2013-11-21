@@ -1,0 +1,13 @@
+<?php $form = $this->getForm(); ?>
+<h2>Вывод</h2>
+<?php echo $form->getConclusion() ?>
+<h2>Рекомендации</h2>
+<?php echo $form->getRecommendation() ?>
+<?php foreach ($form->getFiles() as $file): ?>
+    <img src="<?php echo $file['url'] ?>">
+<?php endforeach ?>
+
+
+Doctor: <?php echo $this->getEmployee()->getName() ?><br>
+Customer: <?php echo $this->getCustomer()->getName() ?><br>
+Product: <?php echo $this->getProduct()->getTitle() ?><br>

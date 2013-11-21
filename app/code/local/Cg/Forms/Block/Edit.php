@@ -12,7 +12,11 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
         $this->_headerText = Mage::helper('cms')->__('Manage Customer Visits');
         $this->_updateButton('save', 'label', Mage::helper('cg_forms')->__('Save Visit'));
         $this->_updateButton('delete', 'label', Mage::helper('cg_forms')->__('Delete Visit'));
-        $this->_updateButton('print', 'label', Mage::helper('cg_forms')->__('Print Visit'));
+        $this->_addButton('print', array(
+                                                'label'     => Mage::helper('cg_forms')->__('Print'),
+                                                'onclick'   => 'window.open(\'' . $this->getPrintUrl() .'\')',
+                                           ));
+
         $this->_removeButton('reset');
 
         if ($this->_isAllowedAction('save')) {
@@ -60,5 +64,12 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
                                                  'id' => Mage::registry('current_customer')->getId(),
                                                  'tab' => 'customer_info_tabs_customer_edit_tab_forms'
                                             ));
+    }
+
+    public function getPrintUrl()
+    {
+        return $this->getUrl('*/*/print', array(
+                                                     'id' => Mage::registry('current_form')->getId()
+                                                ));
     }
 }

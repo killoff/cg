@@ -45,16 +45,21 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
         ));
 */
 
-        $fieldset->addField('description1', 'wysiwyg', array(
-                'label'     => Mage::helper('cg_forms')->__('Conclusion'),
-                'name'      => 'row_data[description1]',
-        ));
 
-//        $fieldset->addField('files', 'uploader', array(
-//                'label'     => Mage::helper('cg_forms')->__('Files'),
-//                'name'      => 'files',
-//                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
-//        ));
+        $fieldset->addField('conclusion', 'textarea', array(
+            'label'     => Mage::helper('cg_forms')->__('Вывод'),
+            'name'      => 'row_data[conclusion]',
+         ));
+
+        $fieldset->addField('recommendation', 'wysiwyg', array(
+                'label'     => Mage::helper('cg_forms')->__('Рекомендации'),
+                'name'      => 'row_data[recommendation]',
+        ));
+        $fieldset->addField('files', 'uploader', array(
+                'label'     => Mage::helper('cg_forms')->__('Files'),
+                'name'      => 'files',
+                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
+        ));
 
         if (Mage::registry('current_form')) {
             $formControl->setValues(Mage::registry('current_form')->getData());

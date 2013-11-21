@@ -1,9 +1,20 @@
 <?php
 class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Element_Abstract
 {
+    public function getImagesHtml()
+    {
+        $html = '';
+        if (is_array($this->getData('value'))) {
+            foreach ($this->getData('value') as $file) {
+                $html .= '<img style="height:100px;" src="' . $file['url']. '">';
+            }
+        }
+        return $html.'<br><br>';
+    }
+
     public function getElementHtml()
     {
-        return '
+        return $this->getImagesHtml() . '
             <button id="selectButton">Выбрать файлы...</button>
             <ul id="manualUploadModeExample" class="unstyled"></ul>
             <button id="triggerUpload">Загрузить!</button>
@@ -37,24 +48,53 @@ class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Elem
         button: $j("#selectButton"),
         validation: {
         allowedExtensions: ["jpeg", "jpg", "png"],
-            sizeLimit: 500000,
+            sizeLimit: 1000000,
             minSizeLimit: 20000
+        },
+        drop: function (e, data) {
+        console.log("dropped");
+        },
+        paste: function (e, data) {
+        console.log("pasted");
+        },
+
+        success: function(response) {
+            console.log(response);
+        },
+
+        add: function (e, data) {
+        },
+        change: function (e, data) {
+        console.log("changed");
         }
     })
         .on("error", errorHandler)
-        .on("upload", function(event, id, filename) {
-            uploaded++;
+        .on("fileuploadadd", function(e, data) {
+            console.log("Added:");
         })
-        .on("complete", function(event, id, filename) {
-            completed++;
-            if (completed == uploaded) {
-//                location.reload();
+        .on("upload", function(e, data) {
+            console.log("uploaded:");
+            console.log(data);
+        })
+        .on("done", function(e, data) {
+            console.log("done:");
+            console.log(data);
+        })
+        .on("complete", function(event, id, name, responseJSON) {
+            var file = responseJSON.file;
+            if (file.error == 0) {
+            $j("<input/>").attr("type", "hidden").attr("name", "files[]").val(JSON.stringify(file))
+                .appendTo($j("#edit_form"));
             }
         });
 
+
         $j("#triggerUpload").click(function() {
             $j("#manualUploadModeExample").fineUploader("uploadStoredFiles");
+            return false;
         });
+
+//        $j("#manualUploadModeExample")
     });
     </script>
 
