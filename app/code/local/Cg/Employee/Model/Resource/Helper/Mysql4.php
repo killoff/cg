@@ -34,6 +34,22 @@ class Cg_Employee_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_
 
         return $adapter->fetchCol($select);
     }
+
+    /**
+     * @param $productIds
+     * @return array
+     */
+    public function getUserIdsByProductIds(array $productIds)
+    {
+        $adapter = $this->_getReadAdapter();
+        $select = $adapter->select()
+            ->from($this->_getEmployeeProductTable(), array('user_id'))
+            ->distinct(true)
+            ->where('product_id IN(?)', $productIds);
+
+        return $adapter->fetchCol($select);
+    }
+
     /**
      * @param $userId
      * @return array
@@ -53,7 +69,15 @@ class Cg_Employee_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_
     {
         $rows = array();
         foreach ($schedule as $period) {
-            $rows[] = array('user_id' => $userId, 'start' => $period['start'], 'end' => $period['end'], 'room_id' => $period['room'], 'type' => 1);
+            $start = new DateTime($period['start']);
+            $end = new DateTime($period['end']);
+            $rows[] = array(
+                'user_id' => $userId,
+                'start' => $start->getTimestamp(),
+                'end' => $end->getTimestamp(),
+                'room_id' => $period['room'],
+                'type' => 1
+            );
         }
         return $this->_getWriteAdapter()->insertMultiple($this->_getEmployeeScheduleTable(), $rows);
 

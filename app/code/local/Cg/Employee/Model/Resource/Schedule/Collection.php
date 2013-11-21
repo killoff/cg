@@ -28,7 +28,7 @@ class Cg_Employee_Model_Resource_Schedule_Collection extends Mage_Core_Model_Res
      */
     public function setStartDate($from)
     {
-        return $this->addFieldToFilter('start', array('gteq' => $from));
+        return $this->addFieldToFilter('main_table.start', array('gteq' => $from));
     }
 
     /**
@@ -37,7 +37,26 @@ class Cg_Employee_Model_Resource_Schedule_Collection extends Mage_Core_Model_Res
      */
     public function setEndDate($to)
     {
-        return $this->addFieldToFilter('start', array('lteq' => $to));
+        return $this->addFieldToFilter('main_table.start', array('lteq' => $to));
+    }
+
+    public function addEmployeeFilter($userIds)
+    {
+        return $this->addFieldToFilter('main_table.user_id', array('in' => $userIds));
+    }
+
+    public function setProductIds($productIds)
+    {
+        $this->getSelect()->join(
+            array('ep' => 'cg_employee_product'),
+            'ep.user_id=main_table.user_id AND ep.product_id IN(' . implode(',', $productIds) . ')',
+            array('product_id' => new Zend_Db_Expr("ep.product_id")))
+            ->join(
+                array('p' => 'cg_product'),
+                'ep.product_id=p.product_id',
+                array('duration' => new Zend_Db_Expr("p.duration"), 'product_name' => new Zend_Db_Expr("p.title")))
+        ;
+        return $this;
     }
 
     /**

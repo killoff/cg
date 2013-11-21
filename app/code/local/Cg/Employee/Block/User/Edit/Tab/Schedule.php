@@ -61,11 +61,12 @@ class Cg_Employee_Block_User_Edit_Tab_Schedule extends Mage_Adminhtml_Block_Temp
         $userId = Mage::registry('permissions_user')->getId();
         $schedule = Mage::getResourceHelper('cg_employee')->getSchedule($userId);
         $result = array();
+        $helper = Mage::helper('cg_kernel/date');
         foreach ($schedule as $row) {
             $result[] = array(
                 'title' => $row['room_name'],
-                'start' => $row['start'],
-                'end' => $row['end'],
+                'start' => $helper->format($row['start']),
+                'end' => $helper->format($row['end']),
                 'allDay' => false,
                 'id' => $row['schedule_id'],
             );
