@@ -3,7 +3,7 @@
  * @TODO Add ACL checks for Cg_Register
  * Class Cg_Forms_Adminhtml_FormsController
  */
-class Cg_Register_Adminhtml_RegisterController extends Mage_Adminhtml_Controller_Action
+class Cg_Register_Adminhtml_RegisterController extends Cg_Kernel_Controller_Action
 {
     /**
      * Init actions
@@ -28,4 +28,21 @@ class Cg_Register_Adminhtml_RegisterController extends Mage_Adminhtml_Controller
     {
         $this->_forward('index');
     }
+
+
+    public function startAction()
+    {
+        $this->loadLayout();
+        $this->_addContent($this->getLayout()->createBlock('cg_register/start'));
+        $this->renderLayout();
+    }
+
+    public function proceedAction()
+    {
+        $products = $this->getRequest()->getParam('product', array());
+        $users = $this->getRequest()->getParam('user', array());
+        $url = $this->getUrl('*/*/create', array('_current' => true, 'products' => implode(',', $products), 'users' => implode(',', $users)));
+        $this->getResponse()->setRedirect($url);
+    }
+
 }

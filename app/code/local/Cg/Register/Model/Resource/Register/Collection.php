@@ -11,6 +11,34 @@ class Cg_Register_Model_Resource_Register_Collection extends Mage_Core_Model_Res
         $this->setOrder('start');
     }
 
+    /**
+     * @param $from
+     * @return Mage_Eav_Model_Entity_Collection_Abstract
+     */
+    public function setStartDate($from)
+    {
+        return $this->addFieldToFilter('main_table.start', array('gteq' => $from));
+    }
+
+    public function addScheduleFilter($scheduleId)
+    {
+        return $this->addFieldToFilter('main_table.schedule_id', $scheduleId);
+    }
+
+    public function addScheduleIdsFilter(array $scheduleIds)
+    {
+        return $this->addFieldToFilter('main_table.schedule_id', array('in' => $scheduleIds));
+    }
+
+    /**
+     * @param $to
+     * @return Mage_Eav_Model_Entity_Collection_Abstract
+     */
+    public function setEndDate($to)
+    {
+        return $this->addFieldToFilter('main_table.start', array('lteq' => $to));
+    }
+
     public function joinInformation()
     {
         $this->getSelect()->join(

@@ -1,172 +1,121 @@
-<style type="text/css">
-    .title {display:block;vfont-size:85%;padding:2px;border-bottom: 1px solid #fff;}
-
-    /*#employee-filter {display: none;}*/
-    /*#services-filter {display: none;}*/
-    #schedule-container {border: 0px;width:60%;height:800px; overflow-y: scroll;}
-
-    #timeline {float:left;margin:59px 0 0 0;}
-    #timeline div {width:30px;height:60px;border-top:solid 1px #888;padding:0 5px 0 0:}
-
-    .room {float:left;width:180px;margin:0;background:#f1f1f1;text-align:center;line-height:130%;}
-    .notAvailable {border-left:3px solid #eee;border-right:3px solid #eee;padding:0 2px;color:#ccc;}
-    .doc1 {border-left:3px solid #16A085;border-right:3px solid #16A085;background:#16A085;color:#ffffff;}
-    .doc2 {border-left:3px solid #3498DB;border-right:3px solid #3498DB;background:#3498DB;color:#ffffff;}
-    .doc3 {border-left:3px solid #9B59B6;border-right:3px solid #9B59B6;background:#9B59B6;color:#ffffff;}
-    .doc4 {border-left:3px solid #E67E22;border-right:3px solid #E67E22;background:#E67E22;color:#ffffff;}
-    .doc5 {border-left:3px solid #E74C3C;border-right:3px solid #E74C3C;background:#E74C3C;color:#ffffff;}
-    .color1 {background:#16A085;color:#ffffff;}
-    .color2 {background:#3498DB;color:#ffffff;}
-    .color3 {background:#9B59B6;color:#ffffff;}
-    .color4 {background:#E67E22;color:#ffffff;}
-    .color5 {background:#E74C3C;color:#ffffff;}
-    .ui-datepicker-week-end .ui-state-default {background: #E74C3C;color: #ffffff;}
-    .visitor {background:#F1C40F;padding:0 2px;color:#fff;text-align:left;overflow:hidden;}
+<style>
+td.available > a {background: #82AF6F}
 </style>
 
 <?php if ($this->getCustomer()): ?>
-    <h2>Запись пациента <?php echo $this->getCustomer()->getName() ?></h2>
+    <h2>Запись пациента <?php echo $this->getCustomer()->getName() ?> на <?php echo date('d.m.Y', $this->getOption('period_start')) ?></h2>
 <?php endif ?>
 
 <div>
-<div id="schedule-container" style="float: left;">
-        <?php foreach ($this->getAll() as $day): ?>
-            <div style="clear:both;" id="day<?php echo $day['date'] ?>">
-            <h2><?php echo $day['date'] ?></h2>
-            <div id="timeline">
-                <?php for($i=9; $i < 20; $i++): ?>
-                    <div><?php echo $i ?><sup>00</sup></div>
-                <?php endfor ?>
-            </div>
-            <?php foreach ($day['rooms'] as $room): ?>
-            <div id="room<?php echo $room['room_id'] ?>" class="room">
-                <span class="title"><?php echo $room['name'] ?></span>
-                <?php $k = 1; ?>
-                <?php foreach ($room['schedule'] as $schedule): ?>
-                    <?php if (!$schedule['generated']): ?>
-                        <span class="title color<?php echo $k ?>"><small><?php echo $schedule['admin_name'] ?>  <?php echo $schedule['start_time'] ?> &ndash; <?php echo $schedule['end_time'] ?></small></span>
-                        <?php $k++; ?>
-                    <?php endif ?>
-                <?php endforeach ?>
+    <?php foreach ($this->getRooms() as $room): ?>
+        <div id="room<?php echo $room['room_id'] ?>" style="float:left;width: 250px;"></div>
+    <?php endforeach ?>
+</div>
+<div id="room" style="float:left;width: 250px;"></div>
 
-                <?php $i = 1; ?>
-                <?php foreach ($room['schedule'] as $schedule): ?>
-                    <?php if ($schedule['generated']): ?>
-                        <div class="notAvailable" style="height: <?php echo $schedule['height'] ?>px;">
-                            <?php /*echo*/ 'с '. $schedule['start_time'] .' до '.$schedule['end_time'] ?>
-                            <span style="display:inline-block; vertical-align:middle;font-size:20pt;">не занято</span>
-                        </div>
-                    <?php else: ?>
-                        <div class="doc<?php echo $i ?>" id="doctor<?php echo $schedule['user_id'] ?>" style="height: <?php echo $schedule['height'] ?>px;">
-                            <?php foreach ($schedule['register'] as $register): ?>
-                                <?php if ($register['generated']): ?>
-                                    <div style="height: <?php echo $register['height'] ?>px;">
-                                        <?php echo 'с '. $register['start_time'] .' до '.$register['end_time'] ?>
-                                        <span style="font-size:20pt;" group="add-register" schedule_id="<?php echo $schedule['schedule_id'] ?>" customer_id="<?php echo $this->getCustomer()->getId() ?>" user_id="<?php echo $schedule['user_id'] ?>" start="<?php echo $register['start'] ?>" end="<?php echo $register['end'] ?>">+</span>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="visitor" id="visit1" style="height: <?php echo $register['height'] ?>px;">
-                                        <?php echo $register['customer_name'] ?>
-                                        <?php echo 'с '. $register['start_time'] .' до '.$register['end_time'] ?>
-                                    </div>
-                                <?php endif ?>
-                            <?php endforeach ?>
-                        </div>
-                        <?php $i++; ?>
-                    <?php endif ?>
-                <?php endforeach ?>
-            </div>
-            <?php endforeach ?>
-            </div>
-        <?php endforeach ?>
-    </div>
+
+<div>
 
 <div id="employees" style="float: left;margin: 20px;">
-
     <div id="datepicker"></div>
-    <div id="employee-filter">
-        <h2>По сотрудникам</h2>
-        <?php foreach ($this->getUsers() as $user): ?>
-            <div><input type="checkbox" id="emp<?php echo $user->getId() ?>"> <label for="emp<?php echo $user->getId() ?>"><?php echo $user->getName() ?></label></div>
-        <?php endforeach ?>
-    </div>
-    <br>
-    <br>
-
-    <div id="services-filter">
-        <h2>По услугам</h2>
-        <?php foreach ($this->getCategories() as $category): ?>
-            <?php $products = $category->getProductsCollection() ?>
-            <?php if ($products->count() > 0): ?>
-                <div class="cat" style="padding:5px 0px 0px 0px;">
-                    <input type="checkbox" id="c<?php echo $category->getId() ?>" class="product-category"<?php if ($category->getIsSelected()): ?> checked="checked"<?php endif ?>>
-                    <label for="c<?php echo $category->getId() ?>"><?php echo $category->getTitle() ?><label>
-                            <?php foreach ($products as $product): ?>
-                                <?php $productId = $product->getId() ?>
-                                <div style="padding:0px 0px 5px 20px;">
-                                    <input type="checkbox"
-                                           id="p<?php echo $productId ?>"
-                                           class="c<?php echo $category->getId() ?>-product"
-                                           name="product[<?php echo $productId ?>]"
-                                           value="<?php echo $productId ?>"
-                                        <?php if ($product->getIsSelected()): ?> checked="checked"<?php endif ?>
-                                        >
-                                    <label for="p<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?><label>
-                                </div>
-                            <?php endforeach ?>
-                </div>
-            <?php endif ?>
-        <?php endforeach ?>
-    </div>
+    <!--div class="schedule-header" style="overflow:hidden;text-align: center;heigth: 50px;line-height: 50px;width: 300px;font-size: 14px;">
+        <a href="" style="float: left;">&larr;&nbsp;<span id="navi-prev-day"></span></a>
+        <span id="navi-day"></span>
+        <a href="" style="float: right;"><span id="navi-next-day"></span>&nbsp;&rarr;</a>
+    </div-->
+    <?php foreach ($this->getAvailableRegistrations() as $item): ?>
+        <div style="padding: 5px;"><a id="combo<?php echo $item['id'] ?>" href="#"><?php echo $item['title'] ?></a></div>
+    <?php endforeach ?>
 </div>
+
 
 </div>
 
-<div id="register-form-container">
-<!--    <div id="server"></div>-->
-</div>
+<div id="register-form-container"/>
 
 
 <script>
 
     $j(function($) {
 
-        $.fn.scrollTo = function( target, options, callback ){
-            if(typeof options == 'function' && arguments.length == 2){ callback = options; options = target; }
-            var settings = $.extend({
-                scrollTarget  : target,
-                offsetTop     : 50,
-                duration      : 500,
-                easing        : 'swing'
-            }, options);
-            return this.each(function(){
-                var scrollPane = $(this);
-                var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
-                var scrollY = (typeof scrollTarget == "number") ? scrollTarget : scrollTarget.offset().top + scrollPane.scrollTop() - parseInt(settings.offsetTop);
-                scrollPane.animate({scrollTop : scrollY }, parseInt(settings.duration), settings.easing, function(){
-                    if (typeof callback == 'function') { callback.call(this); }
-                });
+        var todayDate = new Date(<?php echo $this->getTodayTimestamp() * 1000 ?>);
+        var yesterdayDate = new Date(<?php echo ($this->getTodayTimestamp() - 24 * 60 * 60) * 1000 ?>);
+        var tomorrowDate = new Date(<?php echo ($this->getTodayTimestamp() + 24 * 60 * 60) * 1000 ?>);
+
+
+        $('#navi-prev-day').html($.fullCalendar.formatDate(yesterdayDate, 'dd MMMM')).click(function() {
+            $("div[id^='room']").fullCalendar('prev');
+            return false;
+        });
+        $('#navi-day').html($.fullCalendar.formatDate(todayDate, 'dd MMMM'));
+        $('#navi-next-day').html($.fullCalendar.formatDate(tomorrowDate, 'dd MMMM')).click(function() {
+            $("div[id^='room']").fullCalendar('next');
+            console.log(todayDate);
+//            todayDate.setDate(todayDate.getDate()+1);
+            return false;
+        });
+
+        <?php foreach ($this->getRooms() as $room): ?>
+            var calendar<?php echo $room['room_id'] ?> = $('#room<?php echo $room['room_id'] ?>').fullCalendar({
+                height: 1000,
+                minTime: 9,
+                maxTime: 19,
+                slotMinutes: 15,
+                defaultView: 'agendaDay',
+                allDaySlot: false,
+                axisFormat: 'H:mm',
+                header: {left: '', right: '', center: ''},
+                columnFormat: {day: '<?php echo $room['name'] ?>'},
+                selectable: true,
+                selectHelper: true,
+                events: <?php echo json_encode($this->getRoomEvents($room['room_id'])) ?>,
+                eventClick: function(calEvent, jsEvent, view) {
+//                    console.log(calEvent);
+//                    console.log(jsEvent);
+                    $.get('<?php echo $this->getUrl('*/register_ajax/add') ?>',
+                        {schedule_id: calEvent.schedule_id, user_id: calEvent.user_id, customer_id: <?php echo $this->getCustomer()->getId() ?>, start:calEvent.timestamp_start},
+                        function(response) {
+                            $('#register-form-container').html(response);
+                            $("#register-form-container").dialog("open");
+                            $('#register-form').submit(function(event) {
+                                $(this).ajaxSubmit({'success': function(response) {
+                                    calendar<?php echo $room['room_id'] ?>.fullCalendar('renderEvent',
+                                        $.parseJSON(response),
+                                        true // make the event "stick"
+                                    );
+                                    $("#register-form-container").dialog("close");
+                                }});
+                                event.preventDefault();
+                        });
+                    });
+
+                }
             });
-        }
+        <?php endforeach ?>
+
 
         $('.product-category').click(function() {
             $('.' + this.id + '-product').prop('checked', this.checked);
         });
 
+        var availableDays = <?php echo $this->getAvailableDaysJson() ?>;
         $( "#datepicker" ).datepicker({
             onSelect: function(selectedDate) {
-                $('#schedule-container').scrollTo('#day' + selectedDate);
+                $("div[id^='room']").fullCalendar('gotoDate', new Date(selectedDate));
             },
             minDate: 0,
             maxDate: "+20D",
             dateFormat: "yy-mm-dd",
-            firstDay: 1
+            firstDay: 1,
+            beforeShowDay: function(d) {
+                var dString = $.fullCalendar.formatDate(d, 'yyyy-MM-dd');
+                if (availableDays[dString]) {
+                    return [true,"available"];
+                } else {
+                    return [false,""];
+                }
+            }
         });
-
-        <?php if ($this->getRequest()->getParam('day')): ?>
-            <?php $dateScroll = new DateTime($this->getRequest()->getParam('day')) ?>
-            $('#schedule-container').scrollTo('#day<?php echo $dateScroll->format(Varien_Date::DATE_PHP_FORMAT) ?>');
-        <?php endif ?>
 
         $("#register-form-container").dialog({
             autoOpen: false,
@@ -190,37 +139,16 @@
             ]
         });
 
+        <?php foreach ($this->getAvailableRegistrations() as $item): ?>
+            $('#combo<?php echo $item['id'] ?>').click(function() {
+                <?php foreach ($item['events'] as $roomId => $event): ?>
+                    $('#room<?php echo $roomId ?>').fullCalendar('removeEvents', 'temp');
+                    $('#room<?php echo $roomId ?>').fullCalendar('renderEvent', <?php echo json_encode($event) ?>, true);
+                <?php endforeach ?>
+                return false;
+            });
+        <?php endforeach ?>
 
-        $('span[group="add-register"]').click(function(e) {
-            var start = $(this).attr('start');
-            var userId = $(this).attr('user_id');
-            var customerId = $(this).attr('customer_id');
-            var scheduleId = $(this).attr('schedule_id');
-            $.get('<?php echo $this->getUrl('*/register_ajax/add') ?>', {start: start, schedule_id: scheduleId, user_id: userId, customer_id: customerId}, function(response) {
-                $('#register-form-container').html(response);
-                $("#register-form-container").dialog("open");
-                $('#register-form').submit(function(event) {
-                    $(this).ajaxSubmit({'success': function() {
-                        document.location.href = '<?php echo $this->getUrl('*/register/create', array('customer_id' => $this->getRequest()->getParam('customer_id'))) ?>' + 'day/' + start + '/';
-                    }});
-                    event.preventDefault();
-                });
-            })
-        });
-
-        $( "#visit1" ).draggable({ revert: "invalid" });
-//        $( "#visit2" ).draggable({ revert: "invalid" });
-
-        $( "#doctor2free" ).droppable({
-            activeClass: "ui-state-hover",
-            hoverClass: "ui-state-active",
-            drop: function( event, ui ) {
-//                $( this )
-//                    .addClass( "ui-state-highlight" )
-//                    .find( "p" )
-//                    .html( "Dropped!" );
-            }
-        });
     });
 
 

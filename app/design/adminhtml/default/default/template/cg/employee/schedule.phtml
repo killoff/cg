@@ -18,17 +18,12 @@
 
 <script type="text/javascript">
     var schedule = [];
-
     function jsDateToString(date)
     {
         return $j.fullCalendar.formatDate(date, "yyyy-MM-dd HH:mm:00");
     }
 
     $j(document).ready(function($) {
-        var date = new Date();
-        var d = date.getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
 
         var calendar = $('#calendar').fullCalendar({
             header: {

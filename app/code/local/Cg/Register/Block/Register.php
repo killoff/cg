@@ -8,17 +8,18 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
     protected $_isScheduleGrouped = false;
     protected $_groupedSchedule = array();
 
+    protected $_employeeIdsFilter = array();
+    protected $_productIdsFilter = array();
+
     protected function _construct()
     {
         parent::_construct();
 
         /** @var Cg_Kernel_Helper_Data $helper */
-        $helper = Mage::helper('cg_kernel');
-        $periodStart = $helper->todayStart();
-        $periodEnd = $helper->todayStart()->addDay(20); // add three weeks
+        $helper = Mage::helper('cg_kernel/date');
         $this->_options = array(
-            'period_start' => Varien_Date::formatDate($periodStart),
-            'period_end' => Varien_Date::formatDate($periodEnd),
+            'period_start' => $helper->todayStart(),
+            'period_end' => $helper->todayEnd() + 14*24*60*60,
             'day_start' => '09:00:00',
             'day_end' => '19:00:00',
         );
@@ -27,41 +28,32 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
             $customer = Mage::getModel('customer/customer')->load($customerId);
             $this->setCustomer($customer);
         }
-    }
 
-    public function getAll()
-    {
-        $result = array();
-        foreach ($this->getDays() as $day) {
-            $dayDate = $day->format('Y-m-d');
-            $result[$dayDate] = array(
-                'date' => $dayDate,
-                'rooms' => $this->getRoomsWithSchedule($day)
-            );
+        $products = $this->getRequest()->get('products');
+        if ($products) {
+            $products = preg_split('/,/', $products, 0, PREG_SPLIT_NO_EMPTY);
+            $this->setProductIdsFilter($products);
         }
-        return $result;
-    }
-
-    public function getRoomsWithSchedule(DateTime $date)
-    {
-        $result = array();
-        foreach ($this->getRooms() as $room) {
-            $room['schedule'] = $this->getRoomSchedule($room['room_id'], $date);
-            $result[] = $room;
+        $users = $this->getRequest()->get('users');
+        if ($users) {
+            $users = preg_split('/,/', $users, 0, PREG_SPLIT_NO_EMPTY);
+            $this->setEmployeeIdsFilter($users);
         }
-        return $result;
     }
 
-    /**
-     * @return DatePeriod
-     */
-    public function getDays()
+    public function setEmployeeIdsFilter(array $ids)
     {
-        $start = new DateTime($this->getOption('period_start'));
-        $end = new DateTime($this->getOption('period_end'));
-        $interval = new DateInterval('P1D'); // 1 Day
-        $period = new DatePeriod($start, $interval, $end);
-        return $period;
+        $this->_employeeIdsFilter = $ids;
+    }
+
+    public function setProductIdsFilter(array $ids)
+    {
+        $this->_productIdsFilter = $ids;
+    }
+
+    public function getTodayTimestamp()
+    {
+        return Mage::helper('cg_kernel/date')->todayStart();
     }
 
     protected $_rooms = null;
@@ -73,56 +65,6 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
         return $this->_rooms;
     }
 
-    public function getRoomSchedule($roomId, DateTime $date)
-    {
-        $day = $date->format('Y-m-d');
-        $this->_groupSchedule();
-        $schedule = isset($this->_groupedSchedule[$day][$roomId]) ? $this->_groupedSchedule[$day][$roomId] : array();
-
-        $start = $day.' '.$this->_options['day_start'];
-        $end = $day.' '.$this->_options['day_end'];
-        $schedule = $this->addMissingIntervals($start, $end, $schedule);
-        foreach ($schedule as &$item) {
-            if (!$item['generated']) {
-                $item['register'] = $this->getRegister($item);
-
-            }
-        }
-        return $schedule;
-    }
-
-    protected $_register = null;
-    public function getRegister($schedule)
-    {
-        if ($this->_register === null) {
-            $allRegister = Mage::getModel('cg_register/register')->getCollection()->joinInformation()->getData();
-            $result = array();
-            foreach ($allRegister as $item) {
-                $result[$item['schedule_id']][] = $item;
-            }
-            $this->_register = $result;
-        }
-        $scheduleId = $schedule['schedule_id'];
-        return $this->addMissingIntervals($schedule['start'], $schedule['end'], isset($this->_register[$scheduleId]) ? $this->_register[$scheduleId] : array());
-    }
-
-    protected function _groupSchedule()
-    {
-        if (!$this->_isScheduleGrouped) {
-            $allSchedule = $this->getSchedulesCollection()->getData();
-            foreach ($allSchedule as $schedule) {
-                $schedule['register'] = array();
-                $schedule['generated'] = true;
-                $roomId = $schedule['room_id'];
-                $date = new DateTime($schedule['start']);
-                $day = $date->format('Y-m-d');
-                $this->_groupedSchedule[$day][$roomId][] = $schedule;
-            }
-            $this->_isScheduleGrouped = true;
-        }
-        return $this;
-    }
-
     public function getSchedulesCollection()
     {
         /** @var Cg_Employee_Model_Resource_Schedule_Collection $collection  */
@@ -130,82 +72,36 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
         $collection->setStartDate($this->getOption('period_start'))
             ->setEndDate($this->getOption('period_end'))
             ->setOrder('start', 'ASC')
+            ->setProductIds($this->_productIdsFilter)
             ->joinInformation();
 
         return $collection;
+
+
+        $employeeFilter = $this->_employeeIdsFilter;
+        if ($this->_productIdsFilter) {
+            $employeeFilter = array_merge(
+                $employeeFilter,
+                Mage::getResourceHelper('cg_employee')->getUserIdsByProductIds($this->_productIdsFilter)
+            );
+        }
+        $collection->addEmployeeFilter($employeeFilter);
+//        echo $collection->getSelect()->__toString();
     }
+
 
     public function getRoomCollection()
     {
-        $collection = Mage::getModel('cg_office/room')->getCollection();
+        $roomIds = array();
+        foreach ($this->getSchedulesCollection() as $schedule) {
+            $roomId = $schedule->getRoomId();
+            $roomIds[$roomId] = $roomId;
+        }
+        $collection = Mage::getModel('cg_office/room')->getCollection()
+            ->addFieldToFilter('main_table.room_id', array('in' => $roomIds));
         return $collection;
     }
 
-    public function addMissingIntervals($start, $end, array $intervals = array())
-    {
-        if (empty($intervals)) {
-            return array($this->_getIntervalInfo($start, $end, array('generated' => 1)));
-        }
-
-        $result = array();
-
-        if ($start != $intervals[0]['start']) {
-            $result[] = $this->_getIntervalInfo($start, $intervals[0]['start'], array('generated' => 1));
-        }
-
-        $c = count($intervals);
-        for($i = 0; $i < $c; $i++) {
-            $current = $intervals[$i];
-            $current['generated'] = 0;
-
-            $prevIndex = $i - 1;
-            if ($i > 0) {
-                $prev = $intervals[$prevIndex];
-                if ($prev['end'] != $current['start']) {
-                    $result[] = $this->_getIntervalInfo($prev['end'], $current['start'], array('generated' => 1));
-                }
-            }
-            $result[] = $this->_getIntervalInfo($current['start'], $current['end'], $current);
-        }
-
-        if ($end != $intervals[$c-1]['end']) {
-            $result[] = $this->_getIntervalInfo($intervals[$c-1]['end'], $end, array('generated' => 1));
-        }
-        return $result;
-    }
-
-    protected function _getIntervalInfo($start, $end, $additional = array())
-    {
-        $startDate = new DateTime($start);
-        $endDate = new DateTime($end);
-        $info = array(
-            'start' => $start,
-            'end' => $end,
-            'start_time' => $startDate->format('H:i'),
-            'end_time' => $endDate->format('H:i'),
-            'duration' => $this->getIntervalMinutesDuration($start, $end)
-        );
-        $info['height'] = $this->getIntervalHeight($info['duration']);
-        if (!empty($additional)) {
-            foreach ($additional as $k => $v) {
-                $info[$k] = $v;
-            }
-        }
-        return $info;
-    }
-
-    public function getIntervalMinutesDuration($start, $end)
-    {
-        $start = new DateTime($start);
-        $end = new DateTime($end);
-        $interval = $start->diff($end, true);
-        return $interval->h * 60 + $interval->i;
-    }
-
-    public function getIntervalHeight($duration)
-    {
-        return $duration;
-    }
 
     public function setOption($key, $value)
     {
@@ -218,18 +114,225 @@ class Cg_Register_Block_Register extends Mage_Adminhtml_Block_Template
         return isset($this->_options[$key]) ? $this->_options[$key] : null;
     }
 
-    public function getCategories()
+
+    protected $_roomEvents = null;
+    protected $_perfectDays = array();
+    protected $_periods = array();
+    protected $_scheduleWithRegisters = array();
+    protected $_productTitles = array();
+    protected $_scheduleRooms = array();
+    protected function _generateRoomEvents()
     {
-        $collection = Mage::getModel('cg_product/category')->getCollection();
-        foreach ($collection as $category) {
-            $products = $category->getProducts();
-            $category->setProductsCollection($products);
+        if ($this->_roomEvents === null) {
+            $helper = Mage::helper('cg_kernel/date');
+            $this->_roomEvents = array();
+            $schedule = $this->getSchedulesCollection()->getData();
+            foreach ($schedule as $row) {
+                $roomId = $row['room_id'];
+                $roomEvent = array(
+                    'start' => $helper->format($row['start']),
+                    'end' => $helper->format($row['end']),
+                    'title' => $row['admin_name'],
+                    'allDay' => false,
+                    'editable' => false,
+                    'user_id' => $row['user_id'],
+                    'schedule_id' => $row['schedule_id'],
+                    'product_id' => $row['product_id'],
+                    'duration' => $row['duration'],
+                    'timestamp_start' => $row['start'],
+                    'timestamp_end' => $row['end'],
+                    'backgroundColor' => $this->getBackground($row['user_id'])
+                );
+                $this->_roomEvents[$roomId][] = $roomEvent;
+                $dayKey = date('Y-m-d', $row['start']);
+                $this->_perfectDays[$dayKey] = 1;
+                $this->_productTitles[$row['schedule_id']] = $row['product_name'];
+                $this->_scheduleWithRegisters[$dayKey][$row['schedule_id']] = $roomEvent;
+                $this->_scheduleRooms[$row['schedule_id']] = $roomId;
+            }
+
+            $register = Mage::getModel('cg_register/register')->getCollection()
+                ->setStartDate($this->getOption('period_start'))
+                ->setEndDate($this->getOption('period_end'))
+                ->addScheduleIdsFilter($this->getSchedulesCollection()->getAllIds())
+                ->joinInformation()
+                ->getData();
+            foreach ($register as $row) {
+                $roomId = $row['room_id'];
+                $roomEvent = array(
+                    'start' => $helper->format($row['start']),
+                    'end' => $helper->format($row['end']),
+                    'timestamp_start' => $row['start'],
+                    'timestamp_end' => $row['end'],
+                    'title' => $row['customer_name'],
+                    'allDay' => false,
+                    'editable' => true
+                );
+                $this->_roomEvents[$roomId][] = $roomEvent;
+
+                $dayKey = date('Y-m-d', $row['start']);
+                $this->_scheduleWithRegisters[$dayKey][$row['schedule_id']]['register'][] = $roomEvent;
+            }
         }
-        return $collection;
+
+        return $this->_roomEvents;
     }
 
-    public function getUsers()
+    public function getAvailableDaysJson()
     {
-        return Mage::getModel('admin/user')->getCollection();
+        return json_encode($this->_perfectDays);
     }
+
+    public function getBackground($userId)
+    {
+        $colors = array(
+            '888' => 'rgb(160, 160, 160)',
+            '16' => 'rgb(130, 175, 111)',
+            '9' => 'rgb(209, 91, 71)',
+            '444' => 'rgb(149, 133, 191)',
+            '455' => 'rgb(254, 225, 136)',
+            '1' => 'rgb(214, 72, 126)',
+            '21' => 'rgb(58, 135, 173)'
+        );
+        return isset($colors[$userId]) ? $colors[$userId] : '#5bc0de';
+    }
+
+    public function getRoomEvents($roomId)
+    {
+        $this->_generateRoomEvents();
+        return isset($this->_roomEvents[$roomId]) ? $this->_roomEvents[$roomId] : array();
+    }
+
+    public function getAvailableRegistrations()
+    {
+        $this->_generateRoomEvents();
+        $all = $this->_scheduleWithRegisters;
+
+        $result = array();
+
+        foreach ($all as $dayKey => $schedules) {
+            $set = array();
+            $products = array();
+
+            $startDay = new DateTime($dayKey.' 09:00:00');
+            $endDay = new DateTime($dayKey.' 18:00:00');
+
+            foreach ($schedules as $scheduleId => $schedule) {
+                $set[$scheduleId] = $this->getScheduleSet($dayKey, $scheduleId);
+                $products[$scheduleId] = $schedule['duration'] * 60;
+            }
+//            print_r($set);
+            $step = 900;
+            for($i = $startDay->getTimestamp(); $i < $endDay->getTimestamp(); $i += $step) {
+                $combination = $this->generateProductsSequence($i, $products);
+//                print_r($combination);
+                if ($this->isSuitableCombination($combination, $set)) {
+                    $result[$dayKey][] = $this->prepareCombination($combination);
+                }
+            }
+            break;
+        }
+        return $result[date('Y-m-d')];
+    }
+
+    public function prepareCombination($combinations)
+    {
+        $minStart = null;
+        $maxEnd = 0;
+        foreach ($combinations as $scheduleId => $interval) {
+            if ($minStart === null) {
+                $minStart = $interval['start'];
+            }
+            $minStart = min($interval['start'], $minStart);
+            $maxEnd = max($interval['end'], $maxEnd);
+        }
+
+        $result = array('id' => md5($minStart.'-'.$maxEnd), 'start' => $minStart, 'end' => $maxEnd, 'title' => date('H:i', $minStart) . ' &ndash; '.date('H:i', $maxEnd));
+
+        $helper = Mage::helper('cg_kernel/date');
+        foreach ($combinations as $scheduleId => $interval) {
+            $result['events'][$this->_scheduleRooms[$scheduleId]] = array(
+                'start' => $helper->format($interval['start']),
+                'end' => $helper->format($interval['end']),
+                'title' =>  $this->_productTitles[$scheduleId],
+                'allDay' => false,
+                'editable' => false,
+                'id' => 'temp'
+            );
+        }
+        return $result;
+    }
+
+    public function getScheduleSet($dayKey, $scheduleId)
+    {
+        $schedule = $this->_scheduleWithRegisters[$dayKey][$scheduleId];
+        return array(
+            array($schedule['timestamp_start'], $schedule['timestamp_end'])
+        );
+    }
+
+    public function isSuitableCombination($combo, $set)
+    {
+        foreach ($combo as $productId => $interval) {
+            if (!$this->isSuitableOverlap($interval['start'],$interval['end'], $set[$productId])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function isSuitableOverlap($start, $end, $set)
+    {
+        foreach ($set as $interval) {
+            $overlap = min($end, $interval[1]) - max($start, $interval[0]);
+            $minSuitable = (int)(0.8 * ($end - $start));
+            if ($overlap > 0 && $overlap > $minSuitable) {
+                return $overlap;
+            }
+        }
+        return false;
+    }
+
+    public function generateProductsSequence($time, $products)
+    {
+        $result = array();
+        foreach ($products as $productId => $duration) {
+            $end =  $time + $duration;
+            $result[$productId] = array('start' => $time, 'end' => $end);
+            $time = $end;
+        }
+        return $result;
+    }
+
+    public function getProductScheduleMapping()
+    {
+
+    }
+
+    public function getRoomJsonOptions($room)
+    {
+        $options = array(
+            'height' => 1000,
+            'minTime' => 9,
+            'maxTime' => 19,
+            'slotMinutes' => 15,
+            'defaultView' => 'agendaDay',
+            'allDaySlot' => false,
+
+            'axisFormat' => 'H:mm',
+            'header' => array('left' => '', 'right' => '', 'center' => ''),
+            'columnFormat' => array('day' => $room['name']),
+            'selectable' => true,
+            'selectHelper' => true
+        );
+        $options['events'] = $this->getRoomEvents($room['room_id']);
+        return json_encode($options);
+    }
+}
+
+
+class Register_Generation
+{
+
+
 }

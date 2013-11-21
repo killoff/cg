@@ -1,0 +1,36 @@
+<form action="<?php echo $this->getUrl('*/*/proceed', array('_current' => true)) ?>" method="post">
+    <div id="services-filter" style="float: left">
+        <h2>На какие услуги записываем?</h2>
+        <?php foreach ($this->getProductsTree() as $category): ?>
+            <?php $products = $category->getProductsCollection() ?>
+            <?php if ($products->count() > 0): ?>
+                <div class="cat" style="padding:5px 0px 0px 0px;">
+                    <input style="display: none;" type="checkbox" id="c<?php echo $category->getId() ?>" class="product-category"<?php if ($category->getIsSelected()): ?> checked="checked"<?php endif ?>>
+                    <label for="c<?php echo $category->getId() ?>"><?php echo $category->getTitle() ?><label>
+                            <?php foreach ($products as $product): ?>
+                                <?php $productId = $product->getId() ?>
+                                <div style="padding:0px 0px 5px 20px;">
+                                    <input type="checkbox"
+                                           id="p<?php echo $productId ?>"
+                                           class="c<?php echo $category->getId() ?>-product"
+                                           name="product[<?php echo $productId ?>]"
+                                           value="<?php echo $productId ?>"
+                                        <?php if ($product->getIsSelected()): ?> checked="checked"<?php endif ?>
+                                        >
+                                    <label for="p<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?><label>
+                                </div>
+                            <?php endforeach ?>
+                </div>
+            <?php endif ?>
+        <?php endforeach ?>
+    </div>
+    <div id="employee-filter">
+        <h2>К кому хотим?</h2>
+        <?php foreach ($this->getUsers() as $user): ?>
+            <div><input type="checkbox" id="emp<?php echo $user->getId() ?>" name="user[<?php echo $user->getId() ?>]" value="<?php echo $user->getId() ?>"> <label for="emp<?php echo $user->getId() ?>"><?php echo $user->getName() ?></label></div>
+        <?php endforeach ?>
+    </div>
+    <button type="button" class="scalable disabled" onclick="this.form.submit()">
+        <span><span><span>Продолжить</span></span></span>
+    </button>
+</form>

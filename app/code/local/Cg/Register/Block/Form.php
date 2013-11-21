@@ -31,19 +31,19 @@ class Cg_Register_Block_Form extends Mage_Adminhtml_Block_Template
     {
         /** @var Cg_Register_Helper_Schedule $helper */
         $helper = Mage::helper('cg_register/schedule');
-        $periods = $helper->getAvailablePeriods($this->getScheduleId(), $this->getStart());
+        $dateHelper = Mage::helper('cg_kernel/date');
+        $periods = $helper->getAvailableIntervals($this->getScheduleId(), $this->getStart());
         $result = array();
         foreach ($periods as $period) {
             $start = $period['start'];
             $end = $period['end'];
-            $startString = $start->format(Varien_Date::DATETIME_PHP_FORMAT);
-            $endString = $end->format(Varien_Date::DATETIME_PHP_FORMAT);
             $result[] = new Varien_Object(array(
-                'start' => $startString,
-                'end' => $endString,
-                'start_time' => $start->format('H:i'),
-                'end_time' => $end->format('H:i'),
-                'value' => $startString . '.' . $endString
+                'start' => $start,
+                'end' => $end,
+                'start_time' => $dateHelper->format($start, 'H:i'),
+                'end_time' => $dateHelper->format($end, 'H:i'),
+                'duration' => ($end - $start) / 60,
+                'value' => $start . '-' . $end
             ));
         }
         return $result;

@@ -8,20 +8,15 @@ class Cg_Register_Helper_Schedule
         if (!$schedule->getId()) {
             Mage::throwException('Failed to load schedule to get its available intervals.');
         }
-        $scheduleStart = new DateTime($schedule->getStart());
-        $scheduleEnd = new DateTime($schedule->getEnd());
-        if (!is_object($start)) {
-            $start = new DateTime($start);
-        }
+        $scheduleStart = $schedule->getStart();
+        $scheduleEnd = $schedule->getEnd();
 
         // start is out of schedule
-        if ($start->getTimestamp() < $scheduleStart->getTimestamp()
-            || $start->getTimestamp() >= $scheduleEnd->getTimestamp()
-        ) {
+        if ($start < $scheduleStart || $start >= $scheduleEnd) {
             return array();
         }
 
-        $maxDuration = min(90, ($scheduleEnd->getTimestamp() - $start->getTimestamp()) / 60);
+        $maxDuration = min(90, ($scheduleEnd - $start) / 60);
         $periods = $this->generatePeriods($start, 15, $maxDuration);
 
         $result = array();
@@ -30,6 +25,47 @@ class Cg_Register_Helper_Schedule
                 $result[] = $period;
             }
         }
+        return $result;
+    }
+
+    public function getAvailableIntervals($scheduleId, $startFrom = null, $minDuration = null, $maxDuration = null)
+    {
+        $step = 15 * 60; // step 15 min
+        $minDuration = is_null($minDuration) ? 15 : $minDuration;
+        $maxDuration = is_null($maxDuration) ? 90 : $maxDuration;
+        $minDuration *= 60;
+        $maxDuration *= 60;
+
+        $dateHelper = Mage::helper('cg_kernel/date');
+
+        $schedule = Mage::getModel('cg_employee/schedule')->load($scheduleId);
+        if (!$schedule->getId()) {
+            Mage::throwException('Failed to load schedule to get its available intervals.');
+        }
+        $registered = Mage::getResourceModel('cg_register/register_collection')->addScheduleFilter($scheduleId);
+        $startFrom = is_null($startFrom) ? $schedule->getStart() : $startFrom;
+        for ($i = $startFrom; $i < $schedule->getEnd(); $i += $step) {
+            for ($k = $minDuration; $k <= $maxDuration; $k += $step) {
+                $intervalStart = $i;
+                $intervalEnd = $i + $k;
+                if ($intervalEnd > $schedule->getEnd()) {
+                    break;
+                }
+                $intersected = false;
+                foreach ($registered as $register) {
+                    if ($dateHelper->x($intervalStart, $intervalEnd, $register->getStart(), $register->getEnd())) {
+                        $intersected = true;
+                    }
+                }
+                if (!$intersected) {
+                    $result[] = array(
+                        'start' => $intervalStart,
+                        'end' => $intervalEnd
+                    );
+                }
+            }
+        }
+
         return $result;
     }
 
@@ -46,7 +82,7 @@ class Cg_Register_Helper_Schedule
         if ($collection === null) {
             $collection = Mage::getResourceSingleton('cg_register/register_collection');
             $collection->addFieldToFilter('schedule_id', $schedule->getId());
-            $collection->addFieldToFilter('end', array('gt' => $start->format(Varien_Date::DATETIME_INTERNAL_FORMAT)));
+            $collection->addFieldToFilter('end', array('gt' => $start));
             $collection->load();
             Mage::register($registryKey, $collection);
         }
@@ -79,15 +115,11 @@ class Cg_Register_Helper_Schedule
         if ($maxDuration < $step) {
             return $result;
         }
-        if (!is_object($start)) {
-            $start = new DateTime($start);
-        }
         $limit = $step;
         while($limit <= $maxDuration) {
-            $end = clone $start;
             $result[] = array(
                 'start' => $start,
-                'end'   => $end->add(new DateInterval('PT' . $limit . 'M'))
+                'end'   => $start + $limit * 60
             );
             $limit += $step;
         }

@@ -1,20 +1,43 @@
 <form id="register-form" action="<?php echo $this->getSaveUrl() ?>" method="post">
-    Запись пациента <?php echo $this->getCustomerName() ?>
-    к <?php echo $this->getEmployeeName() ?>
-    на <?php echo $this->getDayDate() ?>
+    Запись пациента <?php echo $this->getCustomerName() ?><br>
+    к <?php echo $this->getEmployeeName() ?><br>
+    на <?php echo $this->getDayDate() ?><br>
     <fieldset>
         <label for="name">Product</label>
 
         <select id="product" name="product_id">
             <option value="">...</option>
             <?php foreach ($this->getProducts() as $product): ?>
-                <option value="<?php echo $product->getId() ?>"><?php echo $product->getTitle() ?></option>
+                <option value="<?php echo $product->getId() ?>" duration="<?php echo $product->getDuration() ?>"><?php echo $product->getTitle() ?></option>
             <?php endforeach  ?>
         </select><br><br>
         <label for="name">Time</label><br>
         <?php foreach ($this->getTimePeriods() as $period): ?>
-            <input type="radio" name="period" id="<?php echo $period->getEnd() ?>" value="<?php echo $period->getValue() ?>"><label for="<?php echo $period->getEnd() ?>"><?php echo $period->getStartTime() ?> &ndash; <?php echo $period->getEndTime() ?></label><br>
+            <div class="period" duration="<?php echo $period->getDuration() ?>">
+                <input type="radio" name="period" id="<?php echo $period->getValue() ?>" value="<?php echo $period->getValue() ?>"><label for="<?php echo $period->getValue() ?>"><?php echo $period->getStartTime() ?> &ndash; <?php echo $period->getEndTime() ?></label>
+            </div>
         <?php endforeach ?>
     </fieldset>
 </form>
 <!--<div id="output"></div>-->
+
+<script type="text/javascript">
+    $j(function($) {
+        /*
+        $('#register-form').submit(function(event) {
+            console.log($('#product').val());
+            console.log($("input[name='period']:checked"));
+            event.preventDefault();
+            if (!$('#product').val() || $("input[name='period']:checked").length == 0) {
+                return false;
+            }
+            return true;
+        });
+        */
+        $('#product').change(function() {
+            var duration = $("#product option:selected:first").attr('duration');
+            $("div.period[duration!='" + duration + "']").hide();
+            $("div.period[duration='" + duration + "']").show();
+        });
+    });
+</script>
