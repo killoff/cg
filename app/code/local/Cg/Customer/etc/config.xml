@@ -38,10 +38,19 @@
             <adminhtml>
                 <rewrite>
                     <customer_edit_tabs>Cg_Customer_Block_Adminhtml_Edit_Tabs</customer_edit_tabs>
+                    <customer_edit_tab_account>Cg_Customer_Block_Adminhtml_Edit_Tab_Account</customer_edit_tab_account>
                     <customer_edit_tab_view_accordion>Cg_Customer_Block_Adminhtml_Edit_Accordion</customer_edit_tab_view_accordion>
+                    <customer_grid>Cg_Customer_Block_Adminhtml_Grid</customer_grid>
                 </rewrite>
             </adminhtml>
         </blocks>
+        <models>
+            <customer>
+                <rewrite>
+                    <customer>Cg_Customer_Model_Customer</customer>
+                </rewrite>
+            </customer>
+        </models>
     </global>
     <admin>
         <routers>

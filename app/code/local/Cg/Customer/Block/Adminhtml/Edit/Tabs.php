@@ -47,13 +47,13 @@ class Cg_Customer_Block_Adminhtml_Edit_Tabs extends Mage_Adminhtml_Block_Widget_
     protected function _beforeToHtml()
     {
         $this->addTab('account', array(
-                                      'label'     => Mage::helper('customer')->__('Account Information'),
+                                      'label'     => Mage::helper('cg_customer')->__('Account Information'),
                                       'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_account')->initForm()->toHtml(),
                                       'active'    => Mage::registry('current_customer')->getId() ? false : true
                                  ));
 
         $this->addTab('addresses', array(
-                                        'label'     => Mage::helper('customer')->__('Addresses'),
+                                        'label'     => Mage::helper('cg_customer')->__('Addresses'),
                                         'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_addresses')->initForm()->toHtml(),
                                    ));
 
