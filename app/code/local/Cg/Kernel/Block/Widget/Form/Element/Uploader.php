@@ -6,10 +6,16 @@ class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Elem
         $html = '';
         if (is_array($this->getData('value'))) {
             foreach ($this->getData('value') as $file) {
-                $html .= '<img style="height:100px;" src="' . $file['url']. '">';
+                $html .= $this->_getImageHtml($file['url'],$this->getData('delete_url').'?'.http_build_query(array('file' => $file['name'])));
             }
         }
-        return $html.'<br><br>';
+        return $html.'<div style="clear:both;padding-bottom:20px;"/>';
+    }
+
+    protected function _getImageHtml($url, $deleteUrl)
+    {
+        $html = '<div style="float: left;padding:10px;"><img style="height:100px;" src="%s"><br><a href="%s" onclick="return confirm(\'Удалить изображени?\')">удалить</a></div>';
+        return sprintf($html, $url, $deleteUrl);
     }
 
     public function getElementHtml()
@@ -47,8 +53,8 @@ class Cg_Kernel_Block_Widget_Form_Element_Uploader extends Varien_Data_Form_Elem
         },
         button: $j("#selectButton"),
         validation: {
-        allowedExtensions: ["jpeg", "jpg", "png"],
-            sizeLimit: 1000000,
+        allowedExtensions: ["jpeg", "jpg", "png", "bmp"],
+            sizeLimit: 10000000,
             minSizeLimit: 20000
         },
         drop: function (e, data) {

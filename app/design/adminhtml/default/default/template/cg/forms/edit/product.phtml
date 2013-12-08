@@ -1,5 +1,5 @@
-<h1><?php echo $this->__('Select product to proceed with form') ?></h1>
-
+<h2 style="float: left;padding-right: 15px;"><?php echo $this->__('Select product to proceed with form') ?></h2> <a href="<?php echo $this->getBackUrl() ?>"><?php echo $this->__('Back to Customer Account') ?></a> <?php echo $this->getCustomer()->getName() ?>
+<div style="clear: both"></div>
 <?php foreach ($this->getEmployeeProducts() as $product): ?>
     <div>
         <a href="<?php echo $this->getNewFormUrl($product) ?>"><?php echo $product->getTitle() ?></a>

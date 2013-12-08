@@ -11,19 +11,13 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 
         $this->_headerText = Mage::helper('cms')->__('Manage Customer Visits');
         $this->_updateButton('save', 'label', Mage::helper('cg_forms')->__('Save Visit'));
-        $this->_updateButton('delete', 'label', Mage::helper('cg_forms')->__('Delete Visit'));
+//        $this->_updateButton('delete', 'label', Mage::helper('cg_forms')->__('Delete Visit'));
         $this->_addButton('print', array(
-                                                'label'     => Mage::helper('cg_forms')->__('Print'),
-                                                'onclick'   => 'window.open(\'' . $this->getPrintUrl() .'\')',
-                                           ));
+            'label'     => Mage::helper('cg_forms')->__('Print'),
+            'onclick'   => 'window.open(\'' . $this->getPrintUrl() .'\')'
+        ));
 
         $this->_removeButton('reset');
-
-        if ($this->_isAllowedAction('save')) {
-            $this->_updateButton('add', 'label', Mage::helper('cg_forms')->__('Add Visit'));
-        } else {
-            $this->_removeButton('add');
-        }
     }
 
     protected function _prepareLayout()
@@ -60,16 +54,16 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 
     public function getBackUrl()
     {
-        return $this->getUrl('*/customer/edit', array(
-                                                 'id' => Mage::registry('current_customer')->getId(),
-                                                 'tab' => 'customer_info_tabs_customer_edit_tab_forms'
-                                            ));
+        if (Mage::registry('current_form')->getId()) {
+            return $this->getUrl('*/customer/edit', array('id' => Mage::registry('current_customer')->getId()));
+        } else {
+            return $this->getUrl('*/*/new', array('customer_id' => Mage::registry('current_customer')->getId()));
+        }
     }
 
     public function getPrintUrl()
     {
-        return $this->getUrl('*/*/print', array(
-                                                     'id' => Mage::registry('current_form')->getId()
-                                                ));
+        return $this->getUrl('*/*/print', array('id' => Mage::registry('current_form')->getId()));
     }
+
 }

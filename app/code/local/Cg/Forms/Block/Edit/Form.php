@@ -6,67 +6,119 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
      */
     protected function _prepareForm()
     {
+        $currentForm = Mage::registry('current_form');
         $formControl = new Varien_Data_Form(array('id' => 'edit_form'));
         $formControl->setUseContainer(true);
         $formControl->setMethod('post');
         $formControl->setAction($this->getUrl('*/*/save', array('_current' => true)));
+        $this->setForm($formControl);
 
-
-        $fieldset = $formControl->addFieldset('form_form', array('legend'=>Mage::helper('cg_forms')->__('Form information'), 'class'     => 'fieldset-wide'));
+        $fieldset = $formControl->addFieldset('form_form', array(
+                                                                'legend'=>Mage::helper('cg_forms')->__('Form information'),
+                                                                'class'     => 'fieldset-wide')
+        );
 
         $this->_addElementTypes($fieldset);
-        $fieldset->addField('customer_id', 'note',
+
+        $customer = Mage::registry('current_customer');
+        $customerText = $customer->getName();
+        if ($customer->getDob()) {
+            $customerText .= ', ' . $this->formatDate($customer->getDob(), Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM)
+                . ' г.р., '
+                . Mage::helper('cg_kernel')->getAgeString($customer->getAge());
+        }
+        $fieldset->addField('customer_name', 'link',
             array(
-                'label'     => Mage::helper('cg_forms')->__('Customer'),
-                'text'    => Mage::registry('current_customer')->getName()
-             )
+                 'label' => Mage::helper('cg_forms')->__('Customer'),
+                 'href' => $this->getUrl('*/customer/edit', array('id' => $customer->getId())),
+                 'style' => 'font-weight:bold;'
+            )
         );
-        $fieldset->addField('product_id', 'note',
+        $fieldset->addField('product_name', 'note',
             array(
-                'label'     => Mage::helper('cg_forms')->__('Product'),
-                'text'    => Mage::registry('current_product')->getTitle()
-             )
+                 'label'     => Mage::helper('cg_forms')->__('Product'),
+                 'text'    => Mage::registry('current_product')->getTitle()
+            )
         );
-/*
-        $fieldset->addField('customer_id', 'select', array(
-                'label'     => Mage::helper('cg_forms')->__('Customer'),
-                'class'     => 'required-entry',
-                'required'  => true,
-                'name'      => 'customer_id',
-                'values'    => $this->_getCustomerValues()
-        ));
+        $fieldset->addField('comment', 'text', array(
+                                                    'label'     => Mage::helper('cg_forms')->__('Comment'),
+                                                    'name'      => 'row_data[comment]',
+                                               ));
 
-        $fieldset->addField('product_id', 'select', array(
-                'label'     => Mage::helper('cg_forms')->__('Product'),
-                'class'     => 'required-entry',
-                'required'  => true,
-                'name'      => 'product_id',
-                'values'    => $this->_getProductValues()
-        ));
-*/
+        $dateFormatIso = Mage::app()->getLocale()->getDateFormat(
+            Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM
+        );
+        $fieldset->addField('user_date', 'date', array(
+                                                      'label'     => Mage::helper('cg_forms')->__('Date'),
+                                                      'name'      => 'user_date',
+                                                      'image'     => $this->getSkinUrl('images/grid-cal.gif'),
+                                                      'format'    => $dateFormatIso,
+
+                                                 ));
+
+        $product = Mage::registry('current_product');
 
 
-        $fieldset->addField('conclusion', 'textarea', array(
-            'label'     => Mage::helper('cg_forms')->__('Вывод'),
-            'name'      => 'row_data[conclusion]',
-         ));
-
-        $fieldset->addField('recommendation', 'wysiwyg', array(
-                'label'     => Mage::helper('cg_forms')->__('Рекомендации'),
-                'name'      => 'row_data[recommendation]',
-        ));
-        $fieldset->addField('files', 'uploader', array(
-                'label'     => Mage::helper('cg_forms')->__('Files'),
-                'name'      => 'files',
-                'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey()))
-        ));
-
-        if (Mage::registry('current_form')) {
-            $formControl->setValues(Mage::registry('current_form')->getData());
+        if ($product->getCategoryId() == 8) {
+            $this->_prepareUziForm();
+        } else {
+            $this->_prepareCommonForm();
         }
 
-        $this->setForm($formControl);
+
+        if (Mage::registry('current_form')) {
+            $this->getForm()->setValues(Mage::registry('current_form')->getData());
+        }
+
+        $this->getForm()->getElement('customer_name')->setValue($customerText);
+        $this->getForm()->getElement('product_name')->setValue($customerText);
+        if (!$currentForm->getId()) {
+            $this->getForm()->getElement('user_date')->setValue(time());
+        }
+
         return parent::_prepareForm();
+
+
+    }
+
+    protected function _prepareCommonForm()
+    {
+        $fieldset = $this->getForm()->getElement('form_form');
+        $fieldset->addField('conclusion', 'wysiwyg', array(
+                                                          'label'     => Mage::helper('cg_forms')->__('Summary'),
+                                                          'name'      => 'row_data[conclusion]',
+                                                          'config'    => array('height' => '150px'),
+                                                     ));
+
+        $fieldset->addField('recommendation', 'wysiwyg', array(
+                                                              'label'     => Mage::helper('cg_forms')->__('Recommendation'),
+                                                              'name'      => 'row_data[recommendation]',
+                                                              'config'    => array('height' => '500px'),
+                                                         ));
+    }
+
+    protected function _prepareUziForm()
+    {
+        $fieldset = $this->getForm()->getElement('form_form');
+        $fieldset->addField('recommendation', 'wysiwyg', array(
+                                                              'label'     => Mage::helper('cg_forms')->__('Description'),
+                                                              'name'      => 'row_data[recommendation]',
+                                                              'config'    => array('height' => '500px'),
+                                                         ));
+        $fieldset->addField('conclusion', 'wysiwyg', array(
+                                                          'label'     => Mage::helper('cg_forms')->__('Conclusion'),
+                                                          'name'      => 'row_data[conclusion]',
+                                                          'config'    => array('height' => '150px'),
+                                                     ));
+
+
+        $fieldset->addField('files', 'uploader', array(
+                                                      'label'     => Mage::helper('cg_forms')->__('Files'),
+                                                      'name'      => 'files',
+                                                      'server_url'    => $this->getUrl('*/*/upload', array('_current' => true, 'form_key' => Mage::getSingleton('core/session')->getFormKey())),
+                                                      'delete_url'    => $this->getUrl('*/*/deleteFile', array('_current' => true)),
+                                                 ));
+
     }
 
     protected function _getCustomerValues()

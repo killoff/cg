@@ -137,11 +137,11 @@ class Cg_Forms_Block_Reservation_Edit_Form extends Mage_Adminhtml_Block_Widget_F
             array('value' => '', 'label' => $this->__('-- Please select --')),
             array('value' => 'не важно', 'label' => 'не важно'),
         );
-        $time = time();
-        $plusYear = mktime(0,0,0,date('m'),date('d'),date('Y')+1);
-        for($i = $time; $i < $plusYear; $i+=30*24*3600) {
-            $month = strftime('%B \'%y', $i);
+        $now = new DateTime('@'.time());
+        for($i = 0; $i < 12; $i++) {
+            $month = strftime('%B \'%y', $now->getTimestamp());
             $result[] = array('label' => $month,'value' => $month);
+            $now->add(new DateInterval('P1M'));
         }
         setlocale(LC_TIME, $old);
         return $result;

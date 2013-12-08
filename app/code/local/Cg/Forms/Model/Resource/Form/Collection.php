@@ -8,6 +8,7 @@ class Cg_Forms_Model_Resource_Form_Collection extends Mage_Core_Model_Resource_D
     protected function _construct()
     {
         $this->_init('cg_forms/form');
+        $this->setOrder('user_date');
 //        $this->_map['fields']['page_id'] = 'main_table.page_id';
 //        $this->_map['fields']['store']   = 'store_table.store_id';
     }
@@ -60,5 +61,18 @@ class Cg_Forms_Model_Resource_Form_Collection extends Mage_Core_Model_Resource_D
             parent::addFieldToFilter($field, $condition);
         }
         return $this;
+    }
+
+    protected function _afterLoad()
+    {
+        foreach ($this->getItems() as $item) {
+            $rowData = @unserialize($item->getRowData());
+            if (is_array($rowData)) {
+                foreach ($rowData as $k => $v) {
+                    $item->setData($k, $v);
+                }
+            }
+        }
+        return parent::_afterLoad();
     }
 }

@@ -82,19 +82,28 @@ class Cg_Forms_Block_Customer_Edit_Tab_Form extends Cg_Forms_Block_List_Grid
                                           'header'    => Mage::helper('cg_forms')->__('Product'),
                                           'align'     => 'left',
                                           'index'     => 'product',
+                                          'sortable' => false
                                      ));
 
         $this->addColumn('employee', array(
                                           'header'    => Mage::helper('cg_forms')->__('Doctor'),
                                           'align'     => 'left',
                                           'index'     => 'admin_name',
+                                          'sortable' => false
                                      ));
+        $this->addColumn('comment', array(
+                                          'header'    => Mage::helper('cg_forms')->__('Comment'),
+                                          'align'     => 'left',
+                                          'index'     => 'comment',
+                                          'sortable' => false
+                                    ));
 
         $this->addColumn('user_date', array(
                                            'header'    => Mage::helper('cg_forms')->__('Date'),
                                            'align'     => 'left',
                                            'index'     => 'user_date',
                                            'type'     => 'date',
+                                           'sortable' => false
                                       ));
     }
 

@@ -1,19 +1,151 @@
 <?php
-class Cg_Forms_Helper_Data extends Mage_Core_Helper_Abstract
+class Cg_Kernel_Helper_Thumbnail
 {
-    public function saveAsJpeg($filename, $destination)
+    protected $_width;
+    protected $_height;
+
+    protected $_source;
+    protected $_destination;
+    protected $_name;
+
+    protected $_baseUrl;
+    protected $_baseDir;
+    protected $_createFolders = true;
+    protected $_backgroundColor = null;
+
+
+    public function __construct($source = null)
+    {
+        $this->_source = $this->_prepareSource($source);
+        $this->_baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+        $this->_baseDir = Mage::getConfig()->getOptions()->getBaseDir();
+    }
+
+    public function getPath($width, $height)
+    {
+        $this->_reset();
+        $this->_width = $width;
+        $this->_height = $height;
+        if (!$this->_exists()) {
+            $this->_createThumbnail();
+        }
+        return $this->_getPath();
+    }
+
+    public function getUrl($width, $height)
+    {
+        $this->_reset();
+        $this->_width = $width;
+        $this->_height = $height;
+        if (!$this->_exists()) {
+            $this->_createThumbnail();
+        }
+        return $this->_getUrl();
+    }
+
+    public function setSource($source)
+    {
+        $this->_source = $this->_prepareSource($source);
+        return $this;
+    }
+
+    public function setDestination($destination)
+    {
+        $this->_destination = $destination;
+        return $this;
+    }
+
+    public function setName($name)
+    {
+        $this->_name = $name;
+        return $this;
+    }
+
+    // reset object state to provide singleton behaviour
+    protected function _reset()
+    {
+        $this->_name = null;
+        $this->_destination = null;
+    }
+
+    protected function _getDestination()
+    {
+        if ($this->_destination === null) {
+            $this->_destination = dirname($this->_source) . DS . $this->_getThumbnailDirName();
+        }
+        return $this->_destination;
+    }
+
+    protected function _getName()
+    {
+        if ($this->_name === null) {
+            $this->_name = pathinfo($this->_source, PATHINFO_BASENAME);
+        }
+        return $this->_name;
+    }
+
+    protected function _exists()
+    {
+        return is_file($this->_getPath());
+    }
+
+    protected function _getPath()
+    {
+        return $this->_getDestination() . DS . $this->_getName();
+    }
+
+    protected function _getUrl()
+    {
+        // convert absolute path to URL if possible
+        if (strpos($this->_getPath(), $this->_baseDir) === 0) {
+            $relative = str_replace($this->_baseDir, '', $this->_getPath());
+            $relative = str_replace(DS, '/', $relative);
+            $relative = ltrim($relative, '/');
+            return $this->_baseUrl . $relative;
+        }
+        return false;
+    }
+
+    protected function _createThumbnail()
+    {
+        require_once 'lib/cg/PHPImageWorkshop/ImageWorkshop.php';
+        $layer = PHPImageWorkshop\ImageWorkshop::initFromPath($this->_source);
+        $layer->resizeInPixel($this->_width, $this->_height);
+        $layer->save($this->_getDestination(), $this->_getName(), $this->_createFolders, $this->_backgroundColor, 90);
+    }
+
+    protected function _getThumbnailDirName()
+    {
+        return $this->_width.'_'.$this->_height;
+    }
+
+    protected function _prepareSource($source)
+    {
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        $isBmp = strtolower($extension) === 'bmp';
+        if ($isBmp) {
+            try {
+                $destination = substr($source, 0, strlen($source) - 3) . 'jpg';
+                $this->_saveBmpAsJpeg($source, $destination);
+            } catch (Exception $e) {
+                return $source;
+            }
+            return $destination;
+        }
+        return $source;
+    }
+
+    protected function _saveBmpAsJpeg($filename, $destination)
     {
         // version 1.00
         if (!($fh = fopen($filename, 'rb'))) {
-            trigger_error('imagecreatefrombmp: Can not open ' . $filename, E_USER_WARNING);
-            return false;
+            throw new Exception('imagecreatefrombmp: Can not open ' . $filename);
         }
         // read file header
         $meta = unpack('vtype/Vfilesize/Vreserved/Voffset', fread($fh, 14));
         // check for bitmap
         if ($meta['type'] != 19778) {
-            trigger_error('imagecreatefrombmp: ' . $filename . ' is not a bitmap!', E_USER_WARNING);
-            return false;
+            throw new Exception('imagecreatefrombmp: ' . $filename . ' is not a bitmap!');
         }
         // read image header
         $meta += unpack('Vheadersize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vcolors/Vimportant', fread($fh, 40));
@@ -34,8 +166,7 @@ class Cg_Forms_Helper_Data extends Mage_Core_Helper_Abstract
             if ($meta['imagesize'] < 1) {
                 $meta['imagesize'] = @filesize($filename) - $meta['offset'];
                 if ($meta['imagesize'] < 1) {
-                    trigger_error('imagecreatefrombmp: Can not obtain filesize of ' . $filename . '!', E_USER_WARNING);
-                    return false;
+                    throw new Exception('imagecreatefrombmp: Can not obtain filesize of ' . $filename . '!');
                 }
             }
         }
@@ -67,18 +198,17 @@ class Cg_Forms_Helper_Data extends Mage_Core_Helper_Abstract
                     case 32:
                     case 24:
                         if (!($part = substr($data, $p, 3))) {
-                            trigger_error($error, E_USER_WARNING);
-                            return $im;
+                            throw new Exception($error);
                         }
                         $color = unpack('V', $part . $vide);
                         break;
                     case 16:
                         if (!($part = substr($data, $p, 2))) {
-                            trigger_error($error, E_USER_WARNING);
-                            return $im;
+                            throw new Exception($error);
                         }
                         $color = unpack('v', $part);
-                        $color[1] = (($color[1] & 0xf800) >> 8) * 65536 + (($color[1] & 0x07e0) >> 3) * 256 + (($color[1] & 0x001f) << 3);
+                        $color[1] = (($color[1] & 0xf800) >> 8) * 65536
+                            + (($color[1] & 0x07e0) >> 3) * 256 + (($color[1] & 0x001f) << 3);
                         break;
                     case 8:
                         $color = unpack('n', $vide . substr($data, $p, 1));
@@ -120,8 +250,7 @@ class Cg_Forms_Helper_Data extends Mage_Core_Helper_Abstract
                         $color[1] = $palette[ $color[1] + 1 ];
                         break;
                     default:
-                        trigger_error('imagecreatefrombmp: ' . $filename . ' has ' . $meta['bits'] . ' bits and this is not supported!', E_USER_WARNING);
-                        return false;
+                        throw new Exception($filename . ' has ' . $meta['bits'] . ' bits and this is not supported!');
                 }
                 imagesetpixel($im, $x, $y, $color[1]);
                 $x++;
@@ -133,4 +262,5 @@ class Cg_Forms_Helper_Data extends Mage_Core_Helper_Abstract
         fclose($fh);
         imagejpeg($im, $destination);
     }
+
 }
