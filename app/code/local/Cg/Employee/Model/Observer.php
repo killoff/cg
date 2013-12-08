@@ -22,8 +22,17 @@ class Cg_Employee_Model_Observer
             } catch (Exception $e) {
 
             }
-
         }
+    }
+
+    public function beforeSaveEmployeeData(Varien_Event_Observer $observer)
+    {
+        /** @var $user Mage_Admin_Model_User Object */
+        $user = $observer->getObject();
+        $position = $user->getData('position');
+        $extra = unserialize($user->getExtra());
+        $extra['position'] = $position;
+        $user->setExtra(serialize($extra));
     }
 
 

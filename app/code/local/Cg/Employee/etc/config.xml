@@ -45,6 +45,14 @@
                     </cg_employee>
                 </observers>
             </admin_user_save_after>
+            <admin_user_save_before>
+                <observers>
+                    <cg_employee>
+                        <class>cg_employee/observer</class>
+                        <method>beforeSaveEmployeeData</method>
+                    </cg_employee>
+                </observers>
+            </admin_user_save_before>
         </events>
     </global>
     <adminhtml>
