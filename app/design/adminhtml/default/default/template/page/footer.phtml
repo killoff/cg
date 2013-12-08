@@ -43,5 +43,9 @@
             setLocation('<?php echo $this->getChangeLocaleUrl() ?>locale/'+elem.value+'/<?php echo $this->getRefererParamName() ?>/<?php echo $this->getUrlForReferer() ?>');
         }
     }
-    Event.observe('interface_locale', 'change', setInterfaceLanguage)
+    Event.observe('interface_locale', 'change', setInterfaceLanguage);
+
+    setInterval(function() {
+        $j.get('<?php echo $this->getUrl('*/forms/ping'); ?>');
+    }, 60000);
 </script>
