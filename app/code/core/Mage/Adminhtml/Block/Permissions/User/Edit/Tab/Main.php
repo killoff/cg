@@ -63,6 +63,14 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Main extends Mage_Adminhtml
             'required' => true,
         ));
 
+        $fieldset->addField('position', 'text', array(
+            'name'  => 'position',
+            'label' => Mage::helper('cg_forms')->__('Position'),
+            'id'    => 'position',
+            'title' => Mage::helper('cg_forms')->__('Position'),
+            'required' => false,
+        ));
+
         $fieldset->addField('firstname', 'text', array(
             'name'  => 'firstname',
             'label' => Mage::helper('adminhtml')->__('First Name'),
@@ -145,6 +153,10 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Main extends Mage_Adminhtml
         unset($data['password']);
 
         $form->setValues($data);
+
+        if (isset($data['extra']['position'])) {
+            $form->getElement('position')->setValue($data['extra']['position']);
+        }
 
         $this->setForm($form);
 
