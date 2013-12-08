@@ -18,7 +18,7 @@
 "Captcha confirmation error: %s","Код подтверждения введен неверно: %s"
 "Captcha confirmed successfully","Код подтверждения введен правильно"
 "Clicks","Переходов"
-"ClientLogin","Вход клиента"
+"ClientLogin","Вход пациента"
 "Confirm","Подтвердить"
 "Current Mapping will be reloaded. Continue?","Текущая привязка будет перезаписана. Продолжить?"
 "Custom attribute, no mapping","Нестандартный атрибут, нет привязки"

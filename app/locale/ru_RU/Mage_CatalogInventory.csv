@@ -1,7 +1,7 @@
 "%s is not correct comparsion method.","%s - неверный метод сравнения."
 "<strong>Please note</strong>, that these Settings are applicable to cart line Items, not the whole Cart.","<strong>Внимание</strong>, эти настройки действуют для товаров в корзине, а не для всей корзины."
 "Allow Qty Below 0","Разрешить кол-во ниже 0"
-"Allow Qty Below 0 and Notify Customer","Разрешить кол-во ниже 0 и оповестить клиента"
+"Allow Qty Below 0 and Notify Customer","Разрешить кол-во ниже 0 и оповестить пациента"
 "Backorders","Задолженные заказы"
 "By Fixed value","На фиксированное значение"
 "By Percentage","На процент"
