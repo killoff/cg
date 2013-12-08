@@ -7,10 +7,10 @@
 #address span {font-size:110%;display:block;}
 #contacts {float:left;width:225px;text-align:left;padding:30px 0 0;}
 #contacts span {font-size:110%;display:block;}
-#license {color:#888;font-size:85%;margin:0 0 35px;}
-#content {line-height:160%;font-size:110%;}
+#license {color:#888;font-size:80%;margin:0 0 35px;}
+#content {line-height:160%;font-size:120%;}
 #sign {float:right;border-top:solid #ccc 1px;font-size:70%;padding:0 75px;position:relative;top:15px;left:0;z-index:10;}
-#copy {color:#888;font-size:70%;padding:25px 0 0;}
+#copy {color:#888;font-size:65%;padding:25px 0 0;}
 -->
 </style>
 
@@ -26,8 +26,8 @@
 <div id="content">
     
 <center>
-<h2>ВИСНОВОК СПЕЦІАЛІСТА</h2>
-<h3><?php echo $this->getEmployee()->getPosition() ?> <?php echo $this->getEmployee()->getName() ?></h3>
+<h2 style="margin:0 0 5px;padding:0;">ВИСНОВОК СПЕЦІАЛІСТА</h2>
+<h3 style="margin:0 0 15px;padding:0;"><?php echo $this->getEmployee()->getPosition() ?> <?php echo $this->getEmployee()->getName() ?></h3>
 </center>
 
 <div style="float:right;">Дата народження: <b><?php echo $this->formatUserDate($this->getCustomer()->getDob()) ?></b></div>
@@ -48,7 +48,7 @@
 <div id="sign">Підпис</div>
 Дата: <b><?php echo $this->formatUserDate($form->getUserDate()) ?></b>
 
-<div id="copy">Документ создан при помощи <b>&laquo;АМЦ Поликлиника&raquo;</b> Версия 0.1</div>
+<div id="copy">Документ создан при помощи <b>&laquo;АМЦ Поликлиника&raquo;</b></div>
 
 </div>
 
