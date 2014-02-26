@@ -17,6 +17,11 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
             'onclick'   => 'window.open(\'' . $this->getPrintUrl() .'\')'
         ));
 
+        $this->_addButton('copy', array(
+                                       'label'     => Mage::helper('cg_forms')->__('Copy'),
+                                       'onclick'   => 'setLocation(\'' . $this->getCopyUrl() . '\')'
+                                  ));
+
         $this->_removeButton('reset');
     }
 
@@ -65,5 +70,15 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
     {
         return $this->getUrl('*/*/print', array('id' => Mage::registry('current_form')->getId()));
     }
+
+    public function getCopyUrl()
+    {
+        return $this->getUrl('*/*/new', array(
+            'parent_id' => Mage::registry('current_form')->getId(),
+            'customer_id' => Mage::registry('current_customer')->getId()
+        ));
+    }
+
+
 
 }

@@ -20,6 +20,10 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 
         $this->_addElementTypes($fieldset);
 
+        $dateFormatIso = Mage::app()->getLocale()->getDateFormat(
+            Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM
+        );
+
         $customer = Mage::registry('current_customer');
         $customerText = $customer->getName();
         if ($customer->getDob()) {
@@ -34,6 +38,17 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                  'style' => 'font-weight:bold;'
             )
         );
+
+        if (!$customer->getDob()) {
+            $fieldset->addField('customer_dob', 'date', array(
+                                                             'label'     => Mage::helper('customer')->__('Date Of Birth'),
+                                                             'name'      => 'customer_dob',
+                                                             'image'     => $this->getSkinUrl('images/grid-cal.gif'),
+                                                             'format'    => $dateFormatIso,
+                                                             'required'  => true
+                                                        ));
+        }
+
         $fieldset->addField('product_name', 'note',
             array(
                  'label'     => Mage::helper('cg_forms')->__('Product'),
@@ -45,9 +60,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                                                     'name'      => 'row_data[comment]',
                                                ));
 
-        $dateFormatIso = Mage::app()->getLocale()->getDateFormat(
-            Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM
-        );
+
         $fieldset->addField('user_date', 'date', array(
                                                       'label'     => Mage::helper('cg_forms')->__('Date'),
                                                       'name'      => 'user_date',
@@ -56,9 +69,8 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 
                                                  ));
 
+
         $product = Mage::registry('current_product');
-
-
         if ($product->getCategoryId() == 8) {
             $this->_prepareUziForm();
         } else {
@@ -68,6 +80,13 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 
         if (Mage::registry('current_form')) {
             $this->getForm()->setValues(Mage::registry('current_form')->getData());
+        }
+
+        $parentFormId = $this->getRequest()->getParam('parent_id');
+        if ($parentFormId) {
+            $parentForm = Mage::getModel('cg_forms/form')->load($parentFormId);
+            $this->getForm()->getElement('conclusion')->setValue($parentForm->getConclusion());
+            $this->getForm()->getElement('recommendation')->setValue($parentForm->getRecommendation());
         }
 
         $this->getForm()->getElement('customer_name')->setValue($customerText);

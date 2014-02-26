@@ -1,4 +1,11 @@
 <style type="text/css">
+@media print
+{
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
 <!--
 #layout {width:900px;font-family:Arial;margin:auto;font-size:100%;color:#333;}
 #header {border-bottom:solid 3px #ccc;padding:0 0 15px;margin:0 0 8px;text-align:center;line-height:140%;}
@@ -15,7 +22,7 @@
 </style>
 
 <div id="layout">
-
+<button class="no-print" onClick="window.print();return false;">ПЕЧАТАТЬ</button>
 <div id="header">
 <div id="address"><span>ТОВ «Ревмоцентр»</span>Київ, вул. <b>Спаська, 5</b>, оф. 54<br><small>(вхід з вул. Хорива)</small></div>
 <div id="contacts"><span>Попередній запис:</span>(044) <b>537-19-12, 599-33-81</b><br><small>www.ревматология.com.ua</small></div>
@@ -29,7 +36,6 @@
 <h2 style="margin:0 0 5px;padding:0;">ВИСНОВОК СПЕЦІАЛІСТА</h2>
 <h3 style="margin:0 0 15px;padding:0;"><?php echo $this->getEmployee()->getPosition() ?> <?php echo $this->getEmployee()->getName() ?></h3>
 </center>
-
 <div style="float:right;">Дата народження: <b><?php echo $this->formatUserDate($this->getCustomer()->getDob()) ?></b></div>
 Пацієнт:  <b><?php echo $this->getCustomer()->getName() ?>	</b>
 

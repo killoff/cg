@@ -136,8 +136,10 @@ class Cg_Forms_Block_Reservation_Edit_Form extends Mage_Adminhtml_Block_Widget_F
         $result = array(
             array('value' => '', 'label' => $this->__('-- Please select --')),
             array('value' => 'не важно', 'label' => 'не важно'),
+            array('value' => 'ближайшее', 'label' => 'ближайшее'),
         );
-        $now = new DateTime('@'.time());
+        $now = mktime(1,1,1,date('m'), 1, date('Y'));
+        $now = new DateTime('@'.$now);
         for($i = 0; $i < 12; $i++) {
             $month = strftime('%B \'%y', $now->getTimestamp());
             $result[] = array('label' => $month,'value' => $month);
