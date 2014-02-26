@@ -153,7 +153,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
 
                 case 'popup':
                     $action['onclick'] =
-                        'popWin(this.href,\'_blank\',\'width=800,height=700,resizable=1,scrollbars=1\');return false;';
+                        'popWin(this.href,\'_blank\',\'width=1000,height=800,resizable=1,scrollbars=1\');return false;';
                     break;
 
             }
