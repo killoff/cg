@@ -71,6 +71,7 @@ class Cg_Customer_Block_Adminhtml_Edit_Tab_Account extends Mage_Adminhtml_Block_
             array('label' => Mage::helper('cg_customer')->__("Male"), 'value' => '1'),
             array('label' => Mage::helper('cg_customer')->__("Female"), 'value' => '2'),
         ));
+        $gender->setValue($customer->getGender());
 
         $form->getElements()->remove('password_fieldset');
         return $this;
