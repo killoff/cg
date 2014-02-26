@@ -27,11 +27,12 @@
             </cg_customer>
         </helpers>
         <resources>
-            <customer_setup>
+            <cg_customer_setup>
                 <setup>
                     <module>Cg_Customer</module>
+                    <class>Mage_Customer_Model_Resource_Setup</class>
                 </setup>
-            </customer_setup>
+            </cg_customer_setup>
         </resources>
         <blocks>
             <cg_customer><class>Cg_Customer_Block</class></cg_customer>

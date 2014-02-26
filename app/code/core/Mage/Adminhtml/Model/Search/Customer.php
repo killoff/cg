@@ -52,7 +52,7 @@ class Mage_Adminhtml_Model_Search_Customer extends Varien_Object
             ->addAttributeToFilter(array(
                 array('attribute'=>'firstname', 'like' => $this->getQuery().'%'),
                 array('attribute'=>'lastname', 'like'  => $this->getQuery().'%'),
-                array('attribute'=>'company', 'like'   => $this->getQuery().'%'),
+                array('attribute'=>'uniqid', 'eq'   => $this->getQuery()),
             ))
             ->setPage(1, 10)
             ->load();
