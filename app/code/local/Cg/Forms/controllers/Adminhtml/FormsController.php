@@ -120,7 +120,13 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
     {
         try {
             $data = $this->getRequest()->getPost();
-            $data = $this->_filterDates($data, array('user_date'));
+            $data = $this->_filterDates($data, array('user_date', 'customer_dob'));
+
+            if ($this->getRequest()->getParam('customer_dob')) {
+                Mage::getModel('customer/customer')->load($this->getRequest()->getParam('customer_id'))
+                    ->setDob($data['customer_dob'])
+                    ->save();
+            }
 
             /** @var $visit Cg_Forms_Model_Visit */
             $form = Mage::getModel('cg_forms/form');
@@ -248,122 +254,70 @@ class Cg_Forms_Adminhtml_FormsController extends Mage_Adminhtml_Controller_Actio
         move_uploaded_file($_FILES['customers']['tmp_name'], $file);
 
         $f = fopen($file, 'rb');
+        $new = 0;
+        $updated = 0;
         $k = 0;
-        fgets($f);
+        fgets($f); // skip header row
 
+        $import = Mage::getModel('cg_customer/import');
+        $from = 14001;
+        $to = 15000;
+        $badRows = array();
         while($data = fgets($f))
         {
+            $k++;
+//            if ($k < $from) {
+//                continue;
+//            }
+//
+//            if ($k > $to) {
+//                break;
+//            }
+
             $row = explode("\t", $data);
-            if (count($row) < 10) {
+            if (count($row) < 14) {
+                $badRows[] = $k;
                 continue;
             }
-            $row = prepareRow($row);
-            $firstnameMiddlename = preg_split('/\s+/', $row[2], 0, PREG_SPLIT_NO_EMPTY);
+            $firstNameMiddleName = preg_split('/\s+/', $row[2], 0, PREG_SPLIT_NO_EMPTY);
             $dob = explode('.', $row[13]);
             $dob = count($dob) == 3 ? $dob : false;
-
-            $data = array(
-                'website_id' => 0,
-                'group_id' => 1,
-                'store_id' => 0,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-                'is_active' => 1,
-                'gender' => $row[12] == 'F' ? '2' : '1',
-                'firstname' => isset($firstnameMiddlename[0]) ? $firstnameMiddlename[0] : '',
-                'middlename' => isset($firstnameMiddlename[1]) ? $firstnameMiddlename[1] : '',
+            $rowData = array(
+                'gender' => $row[12] == 'F' ? 2 : 1,
+                'firstname' => isset($firstNameMiddleName[0]) ? $firstNameMiddleName[0] : '',
+                'middlename' => isset($firstNameMiddleName[1]) ? $firstNameMiddleName[1] : '',
                 'lastname' => isset($row[3]) ? $row[3] : '',
-                'suffix' => '',
-                'taxvat' => '',
                 'dob' => $dob ? $dob['2'].'-'.$dob[1].'-'.$dob[0].' 00:00:00' : '',
-                'password_hash' => '8c37f14bfdb13f8c46e0a359e7032491:4S',
-                'created_in' => 'Admin'
+                'city' => $row[6],
+                'telephone' => $row[11],
+                'street' => $row[4],
+                'uniqid' => $row[0],
+                'comment' => $row[17],
+                'profession' => $row[37],
+                'fax' => $row[9],
             );
-            $data['email'] = md5($data['firstname'].'-'.$data['middlename'].'-'.$data['lastname'].'-'.$data['dob']);
-            $data['email'] = substr($data['email'], 0, 5).'@localhost.com';
-
-            /** @var $customer Mage_Customer_Model_Customer */
-            $customer = Mage::getModel('customer/customer')->setWebsiteId(0);
-            $customer->loadByEmail($data['email']);
-            if ($customer->getId()) {
-                continue;
+            $result = $import->save($rowData);
+            if ($result) {
+                $updated += $result['updated'];
+                $new += $result['new'];
             }
-            $customer->setData($data);
-
-            $address = Mage::getModel('customer/address');
-            $address->setData(array(
-                                   'created_at' => date('Y-m-d H:i:s'),
-                                   'updated_at' => date('Y-m-d H:i:s'),
-                                   'is_active' => '1',
-                                   'firstname' => isset($firstnameMiddlename[0]) ? $firstnameMiddlename[0] : '',
-                                   'middlename' => isset($firstnameMiddlename[1]) ? $firstnameMiddlename[1] : '',
-                                   'lastname' => isset($row[3]) ? $row[3] : '',
-                                   'company' => '',
-                                   'city' => $row[6],
-                                   'country_id' => 'UA',
-                                   'region' => '',
-                                   'postcode' => '0000',
-                                   'telephone' => to_phone($row[11]),
-                                   'fax' => to_phone($row[9]),
-                                   'vat_id' => '',
-                                   'region_id' => '0',
-                                   'street' => $row[4],
-                                   'is_default_billing' => 1,
-                                   'is_default_shipping' => 1,
-                              ));
-            $customer->addAddress($address);
-
-            try {
-
-                $customer->save();
-            } catch (Exception $e) {
-                echo $e->getMessage().'<br><br>';
-                print_R($data);
-            }
-
-            $k++;
-//            if ($k>12000) exit;
         }
 
         fclose($f);
         unlink($file);
 
-        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cg_forms')->__('%s of customers added.', $k));
+//        Mage::getSingleton('adminhtml/session')->addSuccess(
+//            Mage::helper('cg_forms')->__('%s have orhid, %s dont have orhid.', $haveOrhid, $dontHaveOrhid)
+//        );
+        Mage::getSingleton('adminhtml/session')->addSuccess(
+            Mage::helper('cg_forms')->__('Новых: %s, обновленных: %s, всего записей в файле: %s', $new, $updated, $k)
+        );
+        if (count($badRows) > 0) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                Mage::helper('cg_forms')->__('Невалидные строки: %s', implode(',', $badRows))
+            );
+        }
         $this->_redirect('*/*/import');
     }
-
-
-
-
 }
 
-
-function prepareRow($row)
-{
-    foreach ($row as &$value) {
-        $value = iconv('windows-1251', 'utf-8', trim($value));
-    }
-    return $row;
-}
-
-function to_phone($number)
-{
-    $number = preg_replace('/[^\d]+/', '', $number);
-    switch (strlen($number)) {
-        case 10:
-            $number = '38' . $number;
-            break;
-        case 11:
-            $number = '3' . $number;
-            break;
-        default:
-            break;
-    }
-    if (strlen($number) != 12) {
-        return $number;
-    }
-    $nomer = substr($number, -7);
-    $code = substr($number, -10, 3);
-    $prefix = substr($number, 0, 2);
-    return sprintf('+%s(%s)%s', $prefix, $code,  $nomer);
-}
