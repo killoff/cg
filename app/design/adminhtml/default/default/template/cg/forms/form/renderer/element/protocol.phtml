@@ -1,0 +1,247 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$_element = $this->getElement();
+$_trId = $_element->getHtmlContainerId();
+$_class = $_element->getFieldsetHtmlClass();
+?>
+<?php if (!$_element->getNoDisplay()): ?>
+    <tr<?php if($_trId): ?> id="<?php echo $_trId; ?>"<?php endif; ?>>
+        <td class="label<?php echo $_class ? " {$_class}-label" : ''?>"><?php echo trim($_element->getLabelHtml()); ?></td>
+        <td class="<?php echo $_element->hasValueClass() ? $_element->getValueClass() : 'value'; ?><?php echo $_class ? " {$_class}-value" : ''; ?>">
+
+            <link href="/skin/adminhtml/default/default/bootstrap.css" rel="stylesheet" media="screen">
+
+            <div id="breadcrumb" class="breadcrumb"></div>
+            <ul class="nav nav-pills nav-stacked" id="protocol-items">
+            </ul>
+            <?php echo trim($_element->getElementHtml()); ?>
+
+            <script>
+                var metadata = <?php echo $this->getItemsMetadataJson(); ?>;
+                var children = <?php echo $this->getItemsChildrenJson(); ?>;
+
+                function createSelection(field, start, end)
+                {
+                    if( field.createTextRange ) {
+                        var selRange = field.createTextRange();
+                        selRange.collapse(true);
+                        selRange.moveStart('character', start);
+                        selRange.moveEnd('character', end);
+                        selRange.select();
+                        field.focus();
+                    } else if( field.setSelectionRange ) {
+                        field.focus();
+                        field.setSelectionRange(start, end);
+                    } else if( typeof field.selectionStart != 'undefined' ) {
+                        field.selectionStart = start;
+                        field.selectionEnd = end;
+                        field.focus();
+                    }
+                }
+
+                function hasChildren(rowId)
+                {
+                    return children.hasOwnProperty(rowId);
+                }
+
+                function getParentId(rowId)
+                {
+                    if (rowId > 0) {
+                        return getRowMetadata(rowId)['parent_id'];
+                    }
+                    return false;
+                }
+
+                function renderChildren(parentId)
+                {
+                    if (!hasChildren(parentId)) {
+                        return;
+                    }
+
+                    var html = '';
+
+                    var parentParentId = getParentId(parentId);
+                    if (parentParentId !== false) {
+                        html += '<li row-id="' + parentParentId + '" active-id="' + parentId + '">&hellip;</li>';
+                    }
+
+                    var _children = children[parentId];
+                    for (var i = 0; i < _children.length; i++) {
+                        var row = getRowMetadata(_children[i]);
+                        var icon = hasChildren(row.row_id) ? '&nbsp;&rsaquo;&nbsp;' : '&nbsp;&darr;&nbsp;';
+                        html += '<li row-id="' + row.row_id + '">' + icon + row.title + '</li>';
+                    }
+                    $j('#protocol-items').html(html);
+                }
+
+                function selectRow (rowId)
+                {
+                    var _this = navigator.keynavigator;
+                    console.log(_this);
+
+                    console.log(rowId);
+                    console.log($('li[row-id="' + rowId + '"]'));
+                    var li = $('li[row-id="' + rowId + '"]');
+                    if (hasChildren(rowId)) {
+                        renderChildren(rowId);
+                        navigator.keynavigator.reBuild();
+                        if (li.attr('active-id')) {
+                            navigator.keynavigator.setActive($('li[row-id="' + li.attr('active-id') + '"]'));
+                        } else {
+                            navigator.keynavigator.setActive($('ul#protocol-items li').first());
+                        }
+                        $('#protocol-items').trigger("click");
+                        $('#breadcrumb').html(getBreadcrumb(rowId));
+                        $('#breadcrumb > span').click(function() {
+                            selectRow($(this).attr('row-id'));
+                        });
+                    } else {
+                        var rowOutput = getOutput(rowId);
+                        var protocolOutput = $('#protocol').val() + rowOutput;
+                        $('#protocol').val(protocolOutput);
+                        if (rowOutput.indexOf('#') !== -1) {
+                            createSelection($('#protocol').get(0), protocolOutput.indexOf('#'), protocolOutput.lastIndexOf('#') + 1);
+                        }
+                    }
+                }
+
+                function getRowMetadata(rowId)
+                {
+                    return metadata[rowId];
+                }
+
+                function getOutput(rowId)
+                {
+                    var text = '',
+                        rowMetadata;
+                    do {
+                        rowMetadata = getRowMetadata(rowId);
+//                        console.log('indexOf: '+rowMetadata['text'].indexOf('_'));
+                        if (rowMetadata['text'].indexOf('_') === 0) {
+                            rowMetadata['text'] = "\r\n" + rowMetadata['text'].substring(1);
+                            console.log()
+                        }
+                        text = rowMetadata['text'] + text;
+//                        console.log('row ID: '+rowId);
+//                        console.log('row text: '+rowMetadata['text']);
+//                        console.log('indexOf: '+rowMetadata['text'].indexOf('_'));
+//                        console.log('all text: '+text);
+                        rowId = rowMetadata['parent_id'];
+                    } while (rowId > 0);
+
+                    return text;
+                }
+
+                function getBreadcrumb(rowId)
+                {
+                    var breadcrumbs = [],
+                        rowMetadata;
+                    do {
+                        rowMetadata = getRowMetadata(rowId);
+                        if (!rowMetadata || rowMetadata['title'].trim() === '') {
+                            continue;
+                        }
+                        breadcrumbs.unshift('<span row-id="' + rowMetadata['row_id'] + '">' + rowMetadata['title'] + '</span>');
+                        rowId = rowMetadata['parent_id'];
+                    } while (rowId > 0);
+
+                    return breadcrumbs.join('&nbsp;&rarr;&nbsp;');
+                }
+
+                var navigator;
+
+                //console.log(children);
+                jQuery(document).ready(function($) {
+
+                    renderChildren('0');
+
+                    navigator = $('ul#protocol-items li').keynavigator({
+                        cycle: false,
+                        activeClass: 'alert-success',
+                        useCache: false,
+                        //                onBeforeActive: function($el) {
+                        //                    $el.toggleClass(this.options.activeClass);
+                        //                    return $el.hasClass(this.options.activeClass);
+                        //                },
+                        //                parentFocusOn: 'naviOn',
+                        keys: {
+                            /* Callback when key 'escape' is pressed.
+                             * here, represented as its key code.
+                             * 'escape' could be used instead of '27'.
+                             */
+                            27: function($el, cellIndex, e) {
+                                // 'this' - will be the KeyNavigator instance.
+                                // $el - the element
+                                // cellIndex - contains the row and column index.
+                                // e - the event
+                                console.log('pressed ESC!', arguments);
+                            },
+
+                            enter: function(el, cellIndex, e) {
+
+                                var li = $(el[0]);
+                                var rowId = li.attr('row-id');
+                                if (hasChildren(rowId)) {
+                                    renderChildren(rowId);
+                                    this.reBuild();
+                                    if (li.attr('active-id')) {
+                                        this.setActive($('li[row-id="' + li.attr('active-id') + '"]'));
+                                    } else {
+                                        this.setActive($('ul#protocol-items li').first());
+                                    }
+                                    $('#protocol-items').trigger("click");
+                                    $('#breadcrumb').html(getBreadcrumb(rowId));
+                                    $('#breadcrumb > span').click(function() {
+                                        return;
+                                        console.log($(this).attr('row-id'));
+                                        renderChildren($(this).attr('row-id'));
+                                    });
+                                } else {
+                                    var rowOutput = getOutput(rowId);
+                                    var protocolOutput = $('#protocol').val() + rowOutput;
+                                    $('#protocol').val(protocolOutput);
+                                    if (rowOutput.indexOf('#') !== -1) {
+                                        createSelection($('#protocol').get(0), protocolOutput.indexOf('#'), protocolOutput.lastIndexOf('#') + 1);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    $('#protocol-items').trigger("click");
+                    navigator.keynavigator.setActive($('ul#protocol-items li').first());
+                });
+            </script>
+
+
+
+            <script src="http://nekman.github.io/keynavigator/keynavigator.js"></script>
+
+        </td>
+    </tr>
+<?php endif; ?>

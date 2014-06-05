@@ -63,6 +63,13 @@ class Cg_Product_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
             }
         }
 
+        $fieldset->addField('protocol', 'textarea',
+            array(
+                'label'     => Mage::helper('cg_product')->__('Protocol'),
+                'name'      => 'data[protocol]',
+            ));
+
+
         $form->setValues(Mage::registry('current_product')->getData());
 
         $this->setForm($form);

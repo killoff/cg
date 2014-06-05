@@ -51,6 +51,42 @@ class Cg_Product_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_H
         return $this->_getWriteAdapter()->insertMultiple($this->_getProductRoleTable(), $data);
     }
 
+    public function saveProtocolItems($productId, $protocolRows)
+    {
+        $this->_getWriteAdapter()->delete($this->_getProductProtocolTable(), array('product_id=?' => $productId));
+        if (empty($protocolRows)) {
+            return 0;
+        }
+
+        $data = array();
+        foreach ($protocolRows as $index => $row) {
+            $data[] = array(
+                'row_id' => $index,
+                'parent_id' => $row['parent'],
+                'title' => $row['title'],
+                'text' => $row['text'],
+                'action' => $row['action'],
+                'product_id' => $productId
+            );
+        }
+        return $this->_getWriteAdapter()->insertMultiple($this->_getProductProtocolTable(), $data);
+    }
+
+    /**
+     * Return array of Protocol items for product
+     *
+     * @param $productId
+     * @return array
+     */
+    public function getProtocolItems($productId)
+    {
+        $adapter = $this->_getReadAdapter();
+        $select = $adapter->select()
+            ->from($this->_getProductProtocolTable())
+            ->where('product_id=?', $productId);
+        return $adapter->fetchAll($select);
+    }
+
     /**
      * Getter for product<->role table
      *
@@ -59,5 +95,15 @@ class Cg_Product_Model_Resource_Helper_Mysql4 extends Mage_Core_Model_Resource_H
     protected function _getProductRoleTable()
     {
         return $this->_getReadAdapter()->getTableName('cg_product_user_roles');
+    }
+
+    /**
+     * Getter for product<->protocol table
+     *
+     * @return string
+     */
+    protected function _getProductProtocolTable()
+    {
+        return $this->_getReadAdapter()->getTableName('cg_product_protocol');
     }
 }

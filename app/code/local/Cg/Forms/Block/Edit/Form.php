@@ -6,6 +6,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
      */
     protected function _prepareForm()
     {
+        $product = Mage::registry('current_product');
         $currentForm = Mage::registry('current_form');
         $formControl = new Varien_Data_Form(array('id' => 'edit_form'));
         $formControl->setUseContainer(true);
@@ -61,6 +62,7 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                                                ));
 
 
+
         $fieldset->addField('user_date', 'date', array(
                                                       'label'     => Mage::helper('cg_forms')->__('Date'),
                                                       'name'      => 'user_date',
@@ -69,14 +71,24 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
 
                                                  ));
 
-
-        $product = Mage::registry('current_product');
         if ($product->getCategoryId() == 8) {
             $this->_prepareUziForm();
         } else {
             $this->_prepareCommonForm();
         }
 
+        if ($product->getProtocol()) {
+            $fieldset->addField('protocol', 'textarea', array(
+                    'label'     => Mage::helper('cg_forms')->__('Протокол'),
+                    'name'      => 'row_data[protocol]',
+                ));
+
+
+            $protocol = $this->getLayout()->createBlock('cg_forms/form_renderer_element_protocol', 'protocol', array(
+                    'items' => Mage::getResourceHelper('cg_product')->getProtocolItems($product->getId())
+                ));
+            $formControl->getElement('protocol')->setRenderer($protocol);
+        }
 
         if (Mage::registry('current_form')) {
             $this->getForm()->setValues(Mage::registry('current_form')->getData());
@@ -129,7 +141,6 @@ class Cg_Forms_Block_Edit_Form extends Cg_Kernel_Block_Widget_Form
                                                           'name'      => 'row_data[conclusion]',
                                                           'config'    => array('height' => '150px'),
                                                      ));
-
 
         $fieldset->addField('files', 'uploader', array(
                                                       'label'     => Mage::helper('cg_forms')->__('Files'),
