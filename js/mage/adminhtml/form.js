@@ -101,11 +101,38 @@ varienForm.prototype = {
     },
 
     _submit : function(){
+        if (!this.doesConnectionExist()) {
+            alert("Кажется пропал Интернет. \n\nПожалуйста, убедитесь, что Интернет работает и повторите попытку.");
+            return false;
+        }
+
         var $form = $(this.formId);
         if(this.submitUrl){
             $form.action = this.submitUrl;
         }
         $form.submit();
+    },
+
+    doesConnectionExist : function () {
+        var xhr = new XMLHttpRequest();
+
+        var file = "/favicon.ico";
+        var file = "http://sadfsdfnivernv9fng49rtf.com/favicon.ico";
+        var randomNum = Math.round(Math.random() * 10000);
+
+        xhr.open('HEAD', file + "?rand=" + randomNum, false);
+
+        try {
+            xhr.send();
+
+            if (xhr.status >= 200 && xhr.status < 304) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (e) {
+            return false;
+        }
     }
 }
 
