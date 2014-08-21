@@ -52,11 +52,6 @@ class Cg_Forms_Block_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
         return true; //Mage::getSingleton('admin/session')->isAllowed('cg_forms/' . $action);
     }
 
-    public function getValidationUrl()
-    {
-        return false;
-    }
-
     public function getBackUrl()
     {
         if (Mage::registry('current_form')->getId()) {

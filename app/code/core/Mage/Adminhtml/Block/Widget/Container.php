@@ -307,4 +307,6 @@ class Mage_Adminhtml_Block_Widget_Container extends Mage_Adminhtml_Block_Templat
         Mage::dispatchEvent('adminhtml_widget_container_html_before', array('block' => $this));
         return parent::_toHtml();
     }
+
+
 }

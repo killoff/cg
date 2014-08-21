@@ -6,6 +6,12 @@
         </Cg_Kernel>
     </modules>
     <global>
+        <models>
+            <cg_kernel>
+                <class>Cg_Kernel_Model</class>
+                <resourceModel>cg_kernel_resource</resourceModel>
+            </cg_kernel>
+        </models>
         <blocks>
             <cg_kernel>
                 <class>Cg_Kernel_Block</class>
@@ -25,5 +31,15 @@
                 </cg_kernel>
             </updates>
         </layout>
+        <events>
+            <adminhtml_widget_container_html_before>
+                <observers>
+                    <cg_kernel>
+                        <class>cg_kernel/observer</class>
+                        <method>setWidgetContainerValidationUrl</method>
+                    </cg_kernel>
+                </observers>
+            </adminhtml_widget_container_html_before>
+        </events>
     </adminhtml>
 </config>

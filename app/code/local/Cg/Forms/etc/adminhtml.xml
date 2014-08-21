@@ -67,5 +67,10 @@
                 </cg_reservation>
             </children>
         </customer>
+        <cg_forms translate="title" module="cg_forms">
+            <title>Form Templates</title>
+            <sort_order>300</sort_order>
+            <action>adminhtml/forms_template/</action>
+        </cg_forms>
     </menu>
 </config>

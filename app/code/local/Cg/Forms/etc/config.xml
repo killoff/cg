@@ -20,6 +20,12 @@
                     <reservation>
                         <table>cg_reservation</table>
                     </reservation>
+                    <template>
+                        <table>cg_form_template</table>
+                    </template>
+                    <field>
+                        <table>cg_form_field</table>
+                    </field>
                 </entities>
             </cg_forms_resource>
         </models>
